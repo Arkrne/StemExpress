@@ -600,10 +600,45 @@
 
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const deliveryFee = parseFloat(document.getElementById('checkout-delivery').textContent.replace('₱', ''));
-            
+            const total = subtotal + deliveryFee;
+
+            let orderString = `--- ORDER DETAILS ---\n`;
+            orderString += `Date: ${new Date().toLocaleString()}\n`;
+            orderString += `Status: Pending\n\n`;
+
+            orderString += `--- CUSTOMER INFO ---\n`;
+            orderString += `Type: ${customerInfo.type}\n`;
+            orderString += `Name: ${customerInfo.name}\n`;
+            if (isStudent) {
+                orderString += `Grade & Section: ${customerInfo.gradeSection}\n`;
+            } else {
+                orderString += `Address: ${customerInfo.address}\n`;
+            }
+            orderString += `Phone: ${customerInfo.phone || 'N/A'}\n`;
+            orderString += `Facebook: ${customerInfo.fbUrl || 'N/A'}\n`;
+            orderString += `Delivery Option: ${customerInfo.deliveryOption}\n`;
+            if (customerInfo.deliveryOption === 'other' || (customerInfo.deliveryOption === 'delivery' && !isStudent)) {
+                orderString += `Delivery Address: ${customerInfo.deliveryAddress || customerInfo.address}\n`;
+            }
+            orderString += `Notes: ${customerInfo.notes || 'None'}\n\n`;
+
+            orderString += `--- ITEMS ORDERED ---\n`;
+            cart.forEach(item => {
+                orderString += `- ${item.quantity}x ${item.name} @ ₱${item.price.toFixed(2)} = ₱${(item.quantity * item.price).toFixed(2)}\n`;
+            });
+            orderString += `\n`;
+
+            orderString += `--- TOTALS ---\n`;
+            orderString += `Subtotal: ₱${subtotal.toFixed(2)}\n`;
+            orderString += `Delivery Fee: ₱${deliveryFee.toFixed(2)}\n`;
+            orderString += `TOTAL: ₱${total.toFixed(2)}\n`;
+            orderString += `--------------------`;
+
             const orderData = {
-                customerInfo, items: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity, price: item.price })),
-                subtotal, deliveryFee, total: subtotal + deliveryFee, status: 'Pending', createdAt: new Date().toISOString()
+                fullOrder: orderString,
+                status: 'Pending',
+                customerName: customerInfo.name,
+                createdAt: new Date().toISOString()
             };
 
             try {
