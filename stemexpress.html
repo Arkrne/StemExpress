@@ -94,6 +94,19 @@
                 filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.8));
             }
         }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            opacity: 0;
+            z-index: 9999;
+            animation: confetti-fall 3s ease-in-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -810,8 +823,8 @@
                         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-cyan-100"><i class="fas fa-check text-cyan-600 text-xl"></i></div>
                         <div class="mt-3">
                             <h3 class="text-3xl leading-6 font-bold gradient-text mb-4">DIOS MABALOS!</h3>
-                            <p class="text-gray-300 mb-4">Your order has been placed successfully! We'll contact you soon with more details.</p>
-                            <p class="text-gray-400 text-sm">Don't forget to follow our Facebook page for updates.</p>
+                            <p class="text-gray-300 mb-4">Your order has been placed successfully!</p>
+                            <p class="text-gray-400 text-sm">Please follow our <a href="https://www.facebook.com/share/16TiJGA4Uy/?mibextid=wwXIfr" target="_blank" class="text-cyan-400 hover:underline">Facebook page</a> to verify and track your order. We will message you within the hour to confirm.</p>
                             <div class="mt-6">
                                 <button id="close-confirmation" class="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-md font-medium">Close</button>
                             </div>
