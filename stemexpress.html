@@ -603,7 +603,7 @@
             const total = subtotal + deliveryFee;
 
             let orderString = `--- ORDER DETAILS ---\n`;
-            orderString += `Date: ${new Date().toLocaleString()}\n`;
+            orderString += `Date: ${new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}\n`;
             orderString += `Status: Pending\n\n`;
 
             orderString += `--- CUSTOMER INFO ---\n`;
