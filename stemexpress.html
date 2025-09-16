@@ -3,25 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Added Meta Description for SEO -->
+    <meta name="description" content="Pre-order delicious and innovative STEM products from Catanduanes National High School students.">
     <title>STEM Express - Your One Stop, STEM Shop</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Add-ons for Text Geometry -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-
     <style>
         html {
             scroll-behavior: smooth;
@@ -31,6 +23,10 @@
             background-color: #0a0a0a;
             color: #e5e7eb;
             overflow-x: hidden;
+        }
+        /* NEW: Hide scrollbar during preloader animation */
+        body.loading {
+            overflow: hidden;
         }
         #bg-canvas {
             position: fixed;
@@ -59,7 +55,20 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .form-radio {
-             accent-color: #00BFFF;
+            accent-color: #00BFFF;
+        }
+        .view-toggle-btn {
+            background-color: transparent;
+            color: #9ca3af; /* gray-400 */
+            transition: all 0.3s ease-in-out;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; /* rounded-md */
+            font-weight: 600; /* semibold */
+        }
+        .view-toggle-btn.active {
+            background: linear-gradient(90deg, #8A2BE2, #00BFFF);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(0, 191, 255, 0.39);
         }
         .cart-bounce {
             animation: bounce 0.6s ease-in-out;
@@ -94,55 +103,65 @@
                 filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.8));
             }
         }
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: var(--primary);
-            opacity: 0;
-            z-index: 9999;
-            animation: confetti-fall 3s ease-in-out forwards;
+        /* --- NEW: Preloader and Animation Styles --- */
+        #preloader {
+            transition: opacity 0.75s ease-in-out, transform 0.75s ease-in-out;
         }
-        @keyframes confetti-fall {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        #preloader.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        #preloader-logo {
+            animation: rocking-wave 2.5s ease-in-out infinite;
+        }
+        @keyframes rocking-wave {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(8deg) scale(1.05); }
+            75% { transform: rotate(-8deg) scale(1.05); }
+        }
+        /* Hide main content initially */
+        #main-content {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #main-content.visible {
+            opacity: 1;
         }
     </style>
 </head>
-<body class="antialiased">
-
+<body class="loading">
+    <div id="preloader" class="fixed inset-0 bg-[#0a0a0a] z-[100] flex items-center justify-center">
+        <img src="https://i.postimg.cc/GhbXZfP4/Copy-of-STEM-EXPRESS-2-removebg-preview.png" id="preloader-logo" class="w-64 h-64 object-contain" alt="STEM Express Logo Loading">
+    </div>
     <canvas id="bg-canvas"></canvas>
-
-    <div class="relative z-10">
-        <!-- Header -->
+    <div id="main-content" class="relative z-10">
         <header class="py-4 px-4 sm:px-6 lg:px-8 sticky top-0 z-50 glass-card">
             <nav class="container mx-auto flex justify-between items-center">
                 <a href="#" class="flex items-center">
-                    <img src="https://i.postimg.cc/GhbXZfP4/Copy-of-STEM-EXPRESS-2-removebg-preview.png" alt="STEM Express Logo" class="h-28 object-contain logo-animation" onerror="this.onerror=null;this.src='https://placehold.co/112x112/000000/FFFFFF?text=Logo';">
+                    <img src="https://i.postimg.cc/GhbXZfP4/Copy-of-STEM-EXPRESS-2-removebg-preview.png" alt="STEM Express Logo" class="h-36 object-contain logo-animation" onerror="this.onerror=null;this.src='https://placehold.co/144x144/000000/FFFFFF?text=Logo';">
                 </a>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#products" class="text-gray-300 hover:text-white transition-colors duration-300">Products</a>
+                    <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors duration-300">Dashboard</a>
                     <a href="#about" class="text-gray-300 hover:text-white transition-colors duration-300">About Us</a>
                     <a href="#contact" class="text-gray-300 hover:text-white transition-colors duration-300">Contact</a>
                 </div>
                 <div class="flex items-center">
-                    <button id="cart-button" class="p-2 rounded-full text-gray-300 hover:text-white relative transition-colors">
+                    <button id="cart-button" class="p-2 rounded-full text-gray-300 hover:text-white relative transition-colors" aria-label="Open shopping cart">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
                     </button>
-                    <button id="mobile-menu-button" class="md:hidden p-2 ml-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 transition-colors">
+                    <button id="mobile-menu-button" class="md:hidden p-2 ml-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 transition-colors" aria-label="Toggle mobile menu">
                         <i class="fas fa-bars"></i>
                     </button>
                 </div>
             </nav>
             <div id="mobile-menu" class="hidden md:hidden mt-4">
-                <a href="#products" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">Products</a>
+                <a href="#dashboard" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">Dashboard</a>
                 <a href="#about" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">About Us</a>
                 <a href="#contact" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">Contact</a>
             </div>
         </header>
-
-        <!-- Hero Section -->
         <main id="home" class="container mx-auto px-4 sm:px-6 lg:px-8 text-center py-24 md:py-32">
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-4 text-white leading-tight">
                 Your One Stop, <br class="hidden sm:block"> <span class="gradient-text">STEM Shop</span>
@@ -150,28 +169,60 @@
             <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 mb-8">
                 Pre-order delicious and innovative products created by STEM students of CNHS. From mouth-watering snacks to creative crafts, we've got something for everyone!
             </p>
-            <a href="#products" class="inline-block bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-cyan-500/50 transform hover:scale-105 transition-all duration-300">
-                Explore Products
+            <a href="#dashboard" class="inline-block bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-cyan-500/50 transform hover:scale-105 transition-all duration-300">
+                Start Exploring
             </a>
         </main>
-
-        <!-- Products Section -->
-        <section id="products" class="py-20">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Our Full Menu</h2>
-                <div class="mb-8 flex justify-center">
-                    <div class="relative flex-grow max-w-xl">
-                        <input type="text" id="product-search" placeholder="Search for products or shops..." class="w-full form-input rounded-full py-3 px-6 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    </div>
-                </div>
-                <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                    <!-- Product cards will be dynamically inserted here -->
+        <div id="dashboard">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+                <div class="inline-flex rounded-lg shadow-sm bg-gray-800/50 p-1" role="group" aria-label="View options">
+                    <button type="button" id="view-shops-btn" class="view-toggle-btn active">
+                        <i class="fas fa-store mr-2"></i> View by Shop
+                    </button>
+                    <button type="button" id="view-all-products-btn" class="view-toggle-btn">
+                        <i class="fas fa-th-large mr-2"></i> View All Products
+                    </button>
                 </div>
             </div>
+            <section id="businesses" class="py-12">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Explore Our Shops</h2>
+                    <div class="mb-8 flex justify-center">
+                        <div class="relative flex-grow max-w-xl">
+                            <input type="text" id="shop-search" placeholder="Search for shops or taglines..." class="w-full form-input rounded-full py-3 px-6 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="business-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                        </div>
+                </div>
+            </section>
+            <section id="all-products" class="py-12 hidden">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Our Full Menu</h2>
+                    <div class="mb-8 flex justify-center">
+                        <div class="relative flex-grow max-w-xl">
+                            <input type="text" id="product-search" placeholder="Search for products or shops..." class="w-full form-input rounded-full py-3 px-6 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="all-products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                        </div>
+                </div>
+            </section>
+        </div>
+        <section id="products-by-shop" class="py-20 hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-start mb-8">
+                    <button id="back-to-businesses" class="inline-flex items-center text-cyan-400 hover:text-cyan-300 font-semibold transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to All Shops
+                    </button>
+                </div>
+                <h2 id="products-heading" class="text-3xl md:text-4xl font-bold text-center mb-12 text-white"></h2>
+                <div id="single-shop-product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                    </div>
+            </div>
         </section>
-        
-        <!-- About Us Section -->
         <section id="about" class="py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="max-w-5xl mx-auto glass-card rounded-2xl p-8 md:p-12">
@@ -189,18 +240,16 @@
                             </div>
                         </div>
                         <div>
-                            <img src="https://i.postimg.cc/R0tP6H4J/530807715-1289386155897265-8403188358513393858-n.jpg" alt="The STEM Express Team" class="rounded-lg shadow-lg w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Our+Team';">
+                            <img src="https://i.postimg.cc/R0tP6H4J/530807715-1289386155897265-8403188358513393858-n.jpg" alt="The STEM Express Team" class="rounded-lg shadow-lg w-full h-auto object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Our+Team';">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- Contact Section -->
         <section id="contact" class="py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Get In Touch</h2>
-                 <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Get In Touch</h2>
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="glass-card rounded-2xl p-8">
                         <h3 class="text-xl font-bold text-cyan-400 mb-6">Contact Information</h3>
                         <div class="space-y-4">
@@ -212,18 +261,16 @@
                     <div class="glass-card rounded-2xl p-8">
                         <h3 class="text-xl font-bold text-cyan-400 mb-6">Send Us a Message</h3>
                         <form id="contact-form" class="space-y-4">
-                            <div><input type="text" id="name" name="name" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Name"></div>
-                            <div><input type="email" id="email" name="email" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Email"></div>
-                            <div><textarea id="message" name="message" rows="4" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Message"></textarea></div>
+                            <div><label for="name" class="sr-only">Your Name</label><input type="text" id="name" name="name" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Name"></div>
+                            <div><label for="email" class="sr-only">Your Email</label><input type="email" id="email" name="email" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Email"></div>
+                            <div><label for="message" class="sr-only">Your Message</label><textarea id="message" name="message" rows="4" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Message"></textarea></div>
                             <div><button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Send</button></div>
                         </form>
                         <div id="contact-form-feedback" class="text-center mt-4"></div>
                     </div>
-                 </div>
+                </div>
             </div>
         </section>
-
-        <!-- Footer -->
         <footer class="py-12 mt-20 border-t border-gray-800">
             <div class="container mx-auto text-center text-gray-500">
                 <p>&copy; 2025 STEM Express. All Rights Reserved.</p>
@@ -231,31 +278,24 @@
             </div>
         </footer>
     </div>
-    
-    <!-- Container for all modals -->
     <div id="modals-container"></div>
-
-    <!-- Firebase SDKs (Modular) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
-
         // Your web app's Firebase configuration
         const firebaseConfig = {
-          apiKey: "AIzaSyDgKCFUvQ___3HXsT9xLA3ZIbchywwpY6M",
-          authDomain: "stem-express-9512e.firebaseapp.com",
-          databaseURL: "https://stem-express-9512e-default-rtdb.firebaseio.com",
-          projectId: "stem-express-9512e",
-          storageBucket: "stem-express-9512e.appspot.com",
-          messagingSenderId: "577722816518",
-          appId: "1:577722816518:web:e6c626c820d4d54a794b87",
-          measurementId: "G-W2BL0DXXG3"
+            apiKey: "AIzaSyDgKCFUvQ___3HXsT9xLA3ZIbchywwpY6M",
+            authDomain: "stem-express-9512e.firebaseapp.com",
+            databaseURL: "https://stem-express-9512e-default-rtdb.firebaseio.com",
+            projectId: "stem-express-9512e",
+            storageBucket: "stem-express-9512e.appspot.com",
+            messagingSenderId: "577722816518",
+            appId: "1:577722816518:web:e6c626c820d4d54a794b87",
+            measurementId: "G-W2BL0DXXG3"
         };
-
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         // --- DATA ---
         const products = [
              { id: 1, name: "Utenseed", price: 20, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Utenseed", description: "Utenseed refers to various types of bio-plastic-based utensils that have seeds embedded in them. Upon the Utenseed’s disposal, it will eventually dissolve and release the embedded seeds which will sprout into various plants.", ingredients: "Distilled water, glycerin, starch, vinegar, plant seeds", tagline: "Toss it, Grow it", distributor: { name: "Utenseed", logoUrl: "https://i.postimg.cc/hG9WZcGw/513056033-1433567197951836-4852679104130171883-n.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Utenseed" } },
@@ -286,42 +326,398 @@
              { id: 26, name: "Fibedible Packaging", price: 100, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Fibedible", description: "An innovative, edible packaging solution designed to reduce waste. Perfect for wrapping snacks and other small food items, it's the ultimate in sustainable convenience.", ingredients: "Food-grade biopolymers, natural fibers", tagline: "Given by Nature, Crafted by Us", distributor: { name: "BioCraft", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=BC", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+BioCraft" } },
              { id: 27, name: "Pao-Pao Express", price: 75, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Pao-Pao", description: "An innovative culinary creation that combines the beloved Filipino siopao with the rich, spicy flavors of Bicol Express. A unique and exciting twist on two classic dishes.", ingredients: "Flour, pork, coconut milk, shrimp paste, chili", tagline: "Your Chow? PaoPao!", distributor: { name: "Pao-Pao Express", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=PPE", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Pao-Pao" } }
         ];
+        const uniqueBusinesses = Object.values(products.reduce((acc, product) => {
+            const bizName = product.distributor.name;
+            if (!acc[bizName]) {
+                acc[bizName] = { name: bizName, logoUrl: product.distributor.logoUrl, teamImage: product.distributor.teamImage, tagline: product.tagline };
+            }
+            return acc;
+        }, {}));
+
+        // --- Cart Persistence ---
         let cart = [];
+
+        function saveCartToLocalStorage() {
+            try {
+                localStorage.setItem('stemExpressCart', JSON.stringify(cart));
+            } catch (e) {
+                console.error("Failed to save cart to localStorage", e);
+            }
+        }
+
+        function loadCartFromLocalStorage() {
+            try {
+                const savedCart = localStorage.getItem('stemExpressCart');
+                if (savedCart) {
+                    cart = JSON.parse(savedCart);
+                    // Basic validation to ensure items have required properties
+                    cart = cart.filter(item => item && item.id && item.name && item.price !== undefined && item.quantity > 0);
+                }
+            } catch (e) {
+                console.error("Failed to load cart from localStorage", e);
+                cart = []; // Reset to empty on error
+            }
+        }
+
         const DELIVERY_FEE = 30;
 
+        // --- Helper Functions for Loading States ---
+        function disableButton(buttonElement, loadingText = "Processing...") {
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.dataset.originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = loadingText;
+            }
+        }
+
+        function enableButton(buttonElement) {
+            if (buttonElement && buttonElement.disabled) {
+                buttonElement.disabled = false;
+                if (buttonElement.dataset.originalText) {
+                    buttonElement.innerHTML = buttonElement.dataset.originalText;
+                    delete buttonElement.dataset.originalText;
+                } else {
+                    // Fallback if original text wasn't saved
+                    buttonElement.innerHTML = buttonElement.textContent || buttonElement.innerText || "Submit";
+                }
+            }
+        }
+
+        // --- Product Variant Grouping Logic ---
+        function groupProductVariants(productsArray) {
+            const grouped = {};
+            productsArray.forEach(product => {
+                // Use product name up to the first '(' as the base name for grouping
+                // e.g., "Spicy Mango Popsicle (Toasted Coconut)" -> "Spicy Mango Popsicle"
+                // You might need to adjust this logic based on your naming convention.
+                const baseNameMatch = product.name.match(/^(.*?)\s*\(/);
+                const baseName = baseNameMatch ? baseNameMatch[1].trim() : product.name;
+
+                if (!grouped[baseName]) {
+                    grouped[baseName] = {
+                        baseName: baseName,
+                        variants: [],
+                        // Use details from the first encountered variant for the group card
+                        image: product.image,
+                        description: product.description,
+                        distributor: product.distributor,
+                        tagline: product.tagline // Assuming tagline is consistent per group
+                    };
+                }
+                grouped[baseName].variants.push(product);
+            });
+            return Object.values(grouped);
+        }
+
         // --- CORE APP LOGIC ---
+        window.onload = () => {
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('main-content');
+            setTimeout(() => {
+                preloader.classList.add('hidden');
+                mainContent.classList.add('visible');
+                document.body.classList.remove('loading');
+                // After the fade out animation, truly hide it
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 750);
+            }, 2500); // 2.5 second splash screen
+        };
         document.addEventListener('DOMContentLoaded', () => {
+            loadCartFromLocalStorage(); // Load cart on startup
             renderAllModals();
             setupEventListeners();
-            renderProducts(products, document.getElementById('product-grid'));
-            updateCart();
+            // Render content for both dashboards on load
+            renderBusinesses(uniqueBusinesses, document.getElementById('business-grid'));
+            // Render grouped products for the main "All Products" grid
+            const groupedProducts = groupProductVariants(products);
+            renderProducts(groupedProducts, document.getElementById('all-products-grid'));
+            updateCart(); // Update UI based on loaded cart
         });
 
-        function renderProducts(productsToRender, container) {
+        function renderBusinesses(businessesToRender, container) {
             if (!container) return;
-            container.innerHTML = productsToRender.map(p => `
-                <div class="product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-id="${p.id}">
-                    <div class="flex items-center mb-2">
-                        <img src="${p.distributor.logoUrl}" alt="${p.distributor.name}" class="w-8 h-8 rounded-full mr-3" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
-                        <span class="text-sm text-gray-400 truncate">${p.distributor.name}</span>
-                    </div>
-                    <div class="relative mb-4 pointer-events-none">
-                        <img src="${p.image}" alt="${p.name}" class="product-image rounded-lg w-full h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
-                        <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
-                         <div class="absolute top-2 -left-2 price-tag text-white text-lg font-bold px-4 py-1 shadow-lg">₱${p.price.toFixed(2)}</div>
-                    </div>
-                    <div class="pointer-events-none">
-                        <h3 class="text-lg font-bold text-white mb-2 truncate">${p.name}</h3>
-                        <p class="text-gray-400 text-sm flex-grow mb-4 line-clamp-2">${p.description}</p>
-                    </div>
-                    <div class="mt-auto">
-                        <button class="add-to-cart bg-gray-700 hover:bg-cyan-500 text-white py-2 px-4 rounded-full text-sm transition-colors duration-300 flex items-center justify-center w-full" data-id="${p.id}"><i class="fas fa-cart-plus mr-2"></i> Add to Cart</button>
+            container.innerHTML = businessesToRender.map(b => `
+                <div class="business-card glass-card rounded-2xl p-4 flex flex-col items-center text-center group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-business-name="${b.name}">
+                    <img src="${b.logoUrl}" alt="Logo for ${b.name}" class="w-24 h-24 rounded-full mb-4 border-2 border-cyan-500/50 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/FFFFFF/000000?text=Logo';">
+                    <h3 class="text-lg font-bold text-white mb-2 truncate w-full">${b.name}</h3>
+                    <p class="text-gray-400 text-sm flex-grow line-clamp-2">"${b.tagline}"</p>
+                    <div class="mt-auto pt-4 w-full">
+                        <span class="inline-block bg-gray-700 text-white py-2 px-4 rounded-full text-sm group-hover:bg-cyan-500 transition-colors duration-300 w-full">View Products</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        // --- CART LOGIC ---
+        function renderProducts(productsToRender, container) {
+            if (!container) return;
+
+            // Check if we are rendering the main "All Products" grid
+            const isMainProductGrid = container.id === 'all-products-grid';
+
+            if (isMainProductGrid) {
+                // --- GROUPED PRODUCTS VIEW ---
+                // productsToRender is expected to be the grouped data from groupProductVariants
+                container.innerHTML = productsToRender.map(gp => `
+                    <div class="product-card grouped-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-base-name="${gp.baseName}">
+                        <div class="flex items-center mb-2">
+                            <img src="${gp.distributor.logoUrl}" alt="Logo for ${gp.distributor.name}" class="w-8 h-8 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <span class="text-sm text-gray-400 truncate">${gp.distributor.name}</span>
+                        </div>
+                        <div class="relative mb-4 pointer-events-none">
+                            <img src="${gp.image}" alt="Image for ${gp.baseName}" class="product-image rounded-lg w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
+                            <!-- Indicate multiple variants -->
+                            <div class="absolute top-2 right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full">Variants: ${gp.variants.length}</div>
+                        </div>
+                        <div class="pointer-events-none">
+                            <h3 class="text-lg font-bold text-white mb-2 truncate">${gp.baseName}</h3>
+                            <p class="text-gray-400 text-sm flex-grow mb-4 line-clamp-2">${gp.description}</p>
+                        </div>
+                         <div class="mt-auto text-center">
+                            <span class="inline-block text-cyan-400 text-sm font-semibold group-hover:text-cyan-300 transition-colors duration-300">View Options</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                // --- INDIVIDUAL PRODUCTS VIEW ---
+                // For other grids (e.g., single shop view), render individual products
+                container.innerHTML = productsToRender.map(p => `
+                    <div class="product-card individual-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-id="${p.id}">
+                        <div class="flex items-center mb-2">
+                            <img src="${p.distributor.logoUrl}" alt="Logo for ${p.distributor.name}" class="w-8 h-8 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <span class="text-sm text-gray-400 truncate">${p.distributor.name}</span>
+                        </div>
+                        <div class="relative mb-4 pointer-events-none">
+                            <img src="${p.image}" alt="Image of ${p.name}" class="product-image rounded-lg w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
+                            <div class="absolute top-2 -left-2 price-tag text-white text-lg font-bold px-4 py-1 shadow-lg">₱${p.price.toFixed(2)}</div>
+                        </div>
+                        <div class="pointer-events-none">
+                            <h3 class="text-lg font-bold text-white mb-2 truncate">${p.name}</h3>
+                            <p class="text-gray-400 text-sm flex-grow mb-4 line-clamp-2">${p.description}</p>
+                        </div>
+                        <div class="mt-auto">
+                            <button class="add-to-cart bg-gray-700 hover:bg-cyan-500 text-white py-2 px-4 rounded-full text-sm transition-colors duration-300 flex items-center justify-center w-full" data-id="${p.id}"><i class="fas fa-cart-plus mr-2"></i> Add to Cart</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- PAGE NAVIGATION & VIEW TOGGLING ---
+        function showProductsForBusiness(businessName) {
+            const productsOfBusiness = products.filter(p => p.distributor.name === businessName);
+            document.getElementById('products-heading').innerHTML = `Products by <span class="gradient-text">${businessName}</span>`;
+            renderProducts(productsOfBusiness, document.getElementById('single-shop-product-grid'));
+            // Hide main dashboard views
+            document.getElementById('businesses').classList.add('hidden');
+            document.getElementById('all-products').classList.add('hidden');
+            // Show the single-shop view
+            document.getElementById('products-by-shop').classList.remove('hidden');
+            document.getElementById('products-by-shop').scrollIntoView({ behavior: 'smooth' });
+        }
+        function showAllBusinesses() {
+            // Hide other views
+            document.getElementById('products-by-shop').classList.add('hidden');
+            document.getElementById('all-products').classList.add('hidden');
+            // Show the main businesses view
+            document.getElementById('businesses').classList.remove('hidden');
+            document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+            // Update toggle buttons to reflect the current view
+            document.getElementById('view-shops-btn').classList.add('active');
+            document.getElementById('view-all-products-btn').classList.remove('active');
+        }
+
+        // --- ALL OTHER FUNCTIONS ---
+        // (Cart, Modals, Event Listeners, Firebase, etc.)
+
+        // --- New function to show the variants modal ---
+        function viewProductVariants(baseName, groupedProducts) {
+            const group = groupedProducts.find(gp => gp.baseName === baseName);
+            if (!group) return;
+
+            const modalId = 'product-variants-modal';
+            let modal = document.getElementById(modalId);
+
+            if (!modal) {
+                // Create the modal container if it doesn't exist
+                const modalContainer = document.createElement('div');
+                modalContainer.id = modalId;
+                modalContainer.className = 'fixed inset-0 z-50 hidden items-center justify-center p-4';
+                modalContainer.innerHTML = `
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('${modalId}')"></div>
+                    <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-4xl max-h-[90vh] flex flex-col">
+                        <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-2xl leading-6 font-bold gradient-text">${group.baseName}</h3>
+                                <button onclick="closeModal('${modalId}')" class="text-gray-400 hover:text-white" aria-label="Close variants"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="mb-6 p-4 bg-black bg-opacity-20 rounded-lg">
+                                <p class="text-gray-300">${group.description}</p>
+                                <p class="text-gray-400 italic mt-2">"${group.tagline}"</p>
+                                 <div class="mt-4 flex items-center">
+                                     <img src="${group.distributor.logoUrl}" alt="Logo for ${group.distributor.name}" class="w-10 h-10 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/40x40/FFFFFF/000000?text=D';">
+                                    <span class="text-sm text-gray-300">Sold by ${group.distributor.name}</span>
+                                </div>
+                            </div>
+                            <h4 class="text-xl font-bold text-white mb-4">Choose a Variant:</h4>
+                            <div id="variants-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Variants will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modalContainer);
+                modal = modalContainer;
+            }
+
+            // Populate the variants list
+            const variantsContainer = modal.querySelector('#variants-list-container');
+            variantsContainer.innerHTML = group.variants.map(variant => `
+                <div class="glass-card rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 hover:bg-gray-800/50 transition-colors">
+                    <img src="${variant.image}" alt="Image of ${variant.name}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1a1a1a/FFFFFF?text=Img';">
+                    <div class="flex-grow">
+                        <h5 class="font-bold text-white">${variant.name}</h5>
+                        <p class="text-gray-400 text-sm mt-1">${variant.ingredients}</p>
+                    </div>
+                    <div class="flex flex-col items-end flex-shrink-0">
+                        <span class="text-lg font-bold text-white mb-2">₱${variant.price.toFixed(2)}</span>
+                        <button class="add-to-cart bg-gray-700 hover:bg-cyan-500 text-white py-2 px-4 rounded-full text-sm transition-colors duration-300 flex items-center" data-id="${variant.id}">
+                            <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Open the modal
+            openModal(modalId);
+        }
+
+        function setupEventListeners() {
+            // View Toggle Logic
+            const shopsBtn = document.getElementById('view-shops-btn');
+            const allProductsBtn = document.getElementById('view-all-products-btn');
+            const businessesSection = document.getElementById('businesses');
+            const allProductsSection = document.getElementById('all-products');
+            shopsBtn.addEventListener('click', () => {
+                businessesSection.classList.remove('hidden');
+                allProductsSection.classList.add('hidden');
+                shopsBtn.classList.add('active');
+                allProductsBtn.classList.remove('active');
+            });
+            allProductsBtn.addEventListener('click', () => {
+                businessesSection.classList.add('hidden');
+                allProductsSection.classList.remove('hidden');
+                shopsBtn.classList.remove('active');
+                allProductsBtn.classList.add('active');
+            });
+            // General click listener
+            document.addEventListener('click', e => {
+                const addToCartButton = e.target.closest('.add-to-cart');
+                if (addToCartButton) {
+                    addToCart(addToCartButton.dataset.id, 1, e);
+                }
+
+                // --- Updated Product Card Click Logic ---
+                const productCard = e.target.closest('.product-card');
+                if (productCard && !addToCartButton) { // Make sure we didn't click the Add to Cart button itself
+                    if (productCard.classList.contains('grouped-product-card')) {
+                         // If it's a grouped product card, show variants
+                        const baseName = productCard.dataset.baseName;
+                        const groupedProducts = groupProductVariants(products); // Regroup on click to be safe
+                        viewProductVariants(baseName, groupedProducts);
+                    } else if (productCard.classList.contains('individual-product-card')) {
+                        // If it's an individual product card (e.g., in single shop view), show details
+                        viewProduct(productCard.dataset.id);
+                    }
+                }
+                // --- End Updated Product Card Click Logic ---
+
+                const businessCard = e.target.closest('.business-card');
+                if (businessCard) {
+                    const businessName = businessCard.dataset.businessName;
+                    showProductsForBusiness(businessName);
+                }
+                if (e.target.closest('#back-to-businesses')) {
+                    showAllBusinesses();
+                }
+                if (e.target.closest('#cart-button')) openModal('cart-sidebar');
+                if (e.target.closest('#close-cart') || e.target.id === 'close-cart-overlay') closeModal('cart-sidebar');
+                if (e.target.closest('.remove-item')) removeFromCart(e.target.closest('.remove-item').dataset.id);
+                if (e.target.closest('.increase-quantity')) {
+                    const item = cart.find(i => i.id == e.target.closest('.increase-quantity').dataset.id);
+                    if(item) updateCartItemQuantity(item.id, item.quantity + 1);
+                }
+                if (e.target.closest('.decrease-quantity')) {
+                    const item = cart.find(i => i.id == e.target.closest('.decrease-quantity').dataset.id);
+                    if(item) updateCartItemQuantity(item.id, item.quantity - 1);
+                }
+                if (e.target.closest('#close-modal')) closeModal('product-modal');
+
+                // --- Updated Modal Quantity Input Logic ---
+                if (e.target.closest('#increase-quantity-modal')) {
+                    let qtyInput = document.getElementById('product-quantity-input');
+                    let currentVal = parseInt(qtyInput.value) || 1;
+                    qtyInput.value = currentVal + 1;
+                }
+                if (e.target.closest('#decrease-quantity-modal')) {
+                    let qtyInput = document.getElementById('product-quantity-input');
+                    let currentVal = parseInt(qtyInput.value) || 1;
+                    qtyInput.value = Math.max(1, currentVal - 1);
+                }
+                // --- End Updated Modal Quantity Input Logic ---
+
+                if (e.target.id === 'add-to-cart-modal') {
+                    const quantityInput = document.getElementById('product-quantity-input');
+                    const quantity = parseInt(quantityInput.value) || 1; // Default to 1 if invalid
+                    addToCart(e.target.dataset.id, quantity, e);
+                    closeModal('product-modal');
+                }
+                if (e.target.id === 'checkout-button') openCheckout();
+                if (e.target.id === 'close-checkout-modal') closeModal('checkout-modal');
+                if (e.target.id === 'place-order') handlePlaceOrder();
+                if (e.target.closest('#close-confirmation')) closeModal('confirmation-modal');
+                if (e.target.closest('#mobile-menu-button')) {
+                    document.getElementById('mobile-menu').classList.toggle('hidden');
+                }
+            });
+            // Search Listeners
+            document.getElementById('shop-search').addEventListener('input', e => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filtered = uniqueBusinesses.filter(b => b.name.toLowerCase().includes(searchTerm) || b.tagline.toLowerCase().includes(searchTerm));
+                renderBusinesses(filtered, document.getElementById('business-grid'));
+            });
+            // --- Updated Product Search Listener ---
+            document.getElementById('product-search').addEventListener('input', e => {
+                const searchTerm = e.target.value.toLowerCase();
+                // Filter individual products based on search term
+                const filteredProducts = products.filter(p =>
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.description.toLowerCase().includes(searchTerm) ||
+                    p.distributor.name.toLowerCase().includes(searchTerm) ||
+                    (p.ingredients && p.ingredients.toLowerCase().includes(searchTerm)) // Optional: search ingredients
+                );
+
+                // Regroup the filtered products
+                const filteredGroupedProducts = groupProductVariants(filteredProducts);
+
+                // Render the grouped results to the main "All Products" grid
+                renderProducts(filteredGroupedProducts, document.getElementById('all-products-grid'));
+            });
+            // --- End Updated Product Search Listener ---
+            // Other listeners
+            document.addEventListener('change', e => {
+                if(e.target.classList.contains('quantity-input')) {
+                    updateCartItemQuantity(e.target.dataset.id, parseInt(e.target.value));
+                }
+                if(e.target.name === 'isStudent' || e.target.name === 'student-delivery' || e.target.name === 'non-student-delivery') {
+                    updateCheckoutFormVisibility();
+                    updateCheckoutDeliveryFee();
+                }
+            });
+            document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
+        }
         function addToCart(productId, quantity = 1, event) {
             const product = products.find(p => p.id == productId);
             if (!product) return;
@@ -331,23 +727,21 @@
             } else {
                 cart.push({ ...product, quantity });
             }
-            updateCart();
-            
-            const card = event.target.closest('.product-card');
-            const productImage = card.querySelector('.product-image');
+            updateCart(); // This will now save to localStorage
+            // ... (flying image animation remains the same) ...
+            const card = event.target.closest('.product-card, .glass-card'); // Adjust selector for variants modal
+            const productImage = card.querySelector('.product-image') || card.querySelector('img'); // Adjust selector
+            if (!productImage) return; // Safety check
             const flyingImage = productImage.cloneNode();
             const rect = productImage.getBoundingClientRect();
             const cartIcon = document.getElementById('cart-button');
             const cartRect = cartIcon.getBoundingClientRect();
-
             flyingImage.classList.add('fly-to-cart');
             flyingImage.style.left = `${rect.left}px`;
             flyingImage.style.top = `${rect.top}px`;
             flyingImage.style.width = `${rect.width}px`;
             flyingImage.style.height = `${rect.height}px`;
-
             document.body.appendChild(flyingImage);
-
             requestAnimationFrame(() => {
                 flyingImage.style.left = `${cartRect.left + cartRect.width / 2}px`;
                 flyingImage.style.top = `${cartRect.top + cartRect.height / 2}px`;
@@ -355,7 +749,6 @@
                 flyingImage.style.height = '20px';
                 flyingImage.style.opacity = '0';
             });
-
             setTimeout(() => {
                 flyingImage.remove();
                 const cartIconElement = cartIcon.querySelector('i');
@@ -363,27 +756,22 @@
                 setTimeout(() => cartIconElement.classList.remove('cart-bounce'), 600);
             }, 1000);
         }
-
         function updateCartItemQuantity(productId, quantity) {
             const item = cart.find(item => item.id == productId);
             if (item) {
                 item.quantity = Math.max(1, quantity);
-                updateCart();
+                updateCart(); // This will now save to localStorage
             }
         }
-
         function removeFromCart(productId) {
             cart = cart.filter(item => item.id != productId);
-            updateCart();
+            updateCart(); // This will now save to localStorage
         }
-
         function updateCart() {
             const cartItemsContainer = document.getElementById('cart-items');
             const cartSummary = document.getElementById('cart-summary');
             const emptyCartMessage = document.getElementById('empty-cart-message');
-
             if (!cartItemsContainer || !cartSummary || !emptyCartMessage) return;
-            
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '';
                 emptyCartMessage.classList.remove('hidden');
@@ -393,36 +781,32 @@
                 cartSummary.classList.remove('hidden');
                 cartItemsContainer.innerHTML = cart.map(item => `
                     <div class="bg-gray-800 rounded-lg p-3 flex items-start">
-                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/64x64/0f172a/f8fafc?text=Img';">
+                        <img src="${item.image}" alt="Image of ${item.name} in cart" class="w-16 h-16 object-cover rounded-md" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/64x64/0f172a/f8fafc?text=Img';">
                         <div class="ml-4 flex-grow">
                             <h4 class="text-sm font-medium text-white">${item.name}</h4>
                             <p class="text-cyan-400 text-sm font-bold">₱${item.price.toFixed(2)}</p>
                             <div class="mt-2 flex items-center">
-                                <button class="cart-quantity-btn decrease-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}"><i class="fas fa-minus text-xs"></i></button>
-                                <input type="number" min="1" value="${item.quantity}" class="quantity-input mx-2 w-12 bg-gray-700 border border-gray-600 rounded text-center text-white text-sm" data-id="${item.id}">
-                                <button class="cart-quantity-btn increase-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}"><i class="fas fa-plus text-xs"></i></button>
+                                <button class="cart-quantity-btn decrease-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}" aria-label="Decrease quantity for ${item.name}"><i class="fas fa-minus text-xs"></i></button>
+                                <input type="number" min="1" value="${item.quantity}" class="quantity-input mx-2 w-12 bg-gray-700 border border-gray-600 rounded text-center text-white text-sm" data-id="${item.id}" aria-label="Quantity for ${item.name}">
+                                <button class="cart-quantity-btn increase-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}" aria-label="Increase quantity for ${item.name}"><i class="fas fa-plus text-xs"></i></button>
                             </div>
                         </div>
-                        <button class="remove-item text-gray-400 hover:text-white ml-2" data-id="${item.id}"><i class="fas fa-times"></i></button>
+                        <button class="remove-item text-gray-400 hover:text-white ml-2" data-id="${item.id}" aria-label="Remove ${item.name} from cart"><i class="fas fa-times"></i></button>
                     </div>
                 `).join('');
             }
             updateCartTotals();
+            saveCartToLocalStorage(); // Save cart state
         }
-
         function updateCartTotals(deliveryFeeAmount = 0) {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const total = subtotal + deliveryFeeAmount;
-            
             document.querySelectorAll('#cart-subtotal, #checkout-subtotal').forEach(el => el.textContent = `₱${subtotal.toFixed(2)}`);
             document.querySelectorAll('#delivery-fee, #checkout-delivery').forEach(el => el.textContent = `₱${deliveryFeeAmount.toFixed(2)}`);
             document.querySelectorAll('#cart-total, #checkout-total').forEach(el => el.textContent = `₱${total.toFixed(2)}`);
-            
             const count = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').textContent = count;
         }
-        
-        // --- MODAL & EVENT LOGIC ---
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -431,7 +815,6 @@
                 document.body.classList.add('overflow-hidden');
             }
         }
-
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -442,18 +825,16 @@
                 }
             }
         }
-        
         function viewProduct(productId) {
             const product = products.find(p => p.id == productId);
             if (!product) return;
-
             document.getElementById('modal-product-name').textContent = product.name;
             document.getElementById('modal-product-image').src = product.image;
+            document.getElementById('modal-product-image').alt = `Image of ${product.name}`; // a11y
             document.getElementById('modal-product-price').textContent = `₱${product.price.toFixed(2)}`;
             document.getElementById('modal-product-description').textContent = product.description;
             document.getElementById('modal-product-ingredients').textContent = product.ingredients;
             document.getElementById('modal-product-tagline').textContent = product.tagline;
-            
             const nutritionContainer = document.getElementById('nutrition-container');
             if (product.nutrition && product.nutrition.trim() !== "") {
                 document.getElementById('modal-product-nutrition').textContent = product.nutrition;
@@ -461,16 +842,15 @@
             } else {
                 nutritionContainer.style.display = 'none';
             }
-
             document.getElementById('add-to-cart-modal').dataset.id = product.id;
-            document.getElementById('product-quantity').textContent = 1;
+            document.getElementById('product-quantity-input').value = 1; // Set input value
             document.getElementById('distributor-logo').src = product.distributor.logoUrl;
+            document.getElementById('distributor-logo').alt = `Logo for ${product.distributor.name}`; // a11y
             document.getElementById('distributor-name').textContent = `Sold by ${product.distributor.name}`;
             document.getElementById('team-image').src = product.distributor.teamImage;
-            
+            document.getElementById('team-image').alt = `Team photo for ${product.distributor.name}`; // a11y
             openModal('product-modal');
         }
-
         function openCheckout() {
             if (cart.length === 0) {
                 alert('Your cart is empty!');
@@ -485,88 +865,15 @@
             updateCheckoutDeliveryFee();
             openModal('checkout-modal');
         }
-
-        function setupEventListeners() {
-            document.addEventListener('click', e => {
-                const addToCartButton = e.target.closest('.add-to-cart');
-                if (addToCartButton) {
-                    addToCart(addToCartButton.dataset.id, 1, e);
-                }
-
-                const productCard = e.target.closest('.product-card');
-                if (productCard && !addToCartButton) {
-                    viewProduct(productCard.dataset.id);
-                }
-
-                if (e.target.closest('#cart-button')) openModal('cart-sidebar');
-                if (e.target.closest('#close-cart') || e.target.id === 'close-cart-overlay') closeModal('cart-sidebar');
-                if (e.target.closest('.remove-item')) removeFromCart(e.target.closest('.remove-item').dataset.id);
-                if (e.target.closest('.increase-quantity')) {
-                    const item = cart.find(i => i.id == e.target.closest('.increase-quantity').dataset.id);
-                    if(item) updateCartItemQuantity(item.id, item.quantity + 1);
-                }
-                if (e.target.closest('.decrease-quantity')) {
-                    const item = cart.find(i => i.id == e.target.closest('.decrease-quantity').dataset.id);
-                    if(item) updateCartItemQuantity(item.id, item.quantity - 1);
-                }
-                if (e.target.closest('#close-modal')) closeModal('product-modal');
-                if (e.target.closest('#increase-quantity-modal')) {
-                    let qtyEl = document.getElementById('product-quantity');
-                    qtyEl.textContent = parseInt(qtyEl.textContent) + 1;
-                }
-                if (e.target.closest('#decrease-quantity-modal')) {
-                    let qtyEl = document.getElementById('product-quantity');
-                    qtyEl.textContent = Math.max(1, parseInt(qtyEl.textContent) - 1);
-                }
-                if (e.target.id === 'add-to-cart-modal') {
-                    const quantity = parseInt(document.getElementById('product-quantity').textContent);
-                    addToCart(e.target.dataset.id, quantity, e);
-                    closeModal('product-modal');
-                }
-                if (e.target.id === 'checkout-button') openCheckout();
-                if (e.target.id === 'close-checkout-modal') closeModal('checkout-modal');
-                if (e.target.id === 'place-order') handlePlaceOrder();
-                if (e.target.closest('#close-confirmation')) closeModal('confirmation-modal');
-                if (e.target.closest('#mobile-menu-button')) {
-                    document.getElementById('mobile-menu').classList.toggle('hidden');
-                }
-            });
-            
-            document.getElementById('product-search').addEventListener('input', e => {
-                const searchTerm = e.target.value.toLowerCase();
-                const filtered = products.filter(p => 
-                    p.name.toLowerCase().includes(searchTerm) || 
-                    p.description.toLowerCase().includes(searchTerm) ||
-                    p.distributor.name.toLowerCase().includes(searchTerm)
-                );
-                renderProducts(filtered, document.getElementById('product-grid'));
-            });
-
-            document.addEventListener('change', e => {
-                if(e.target.classList.contains('quantity-input')) {
-                    updateCartItemQuantity(e.target.dataset.id, parseInt(e.target.value));
-                }
-                if(e.target.name === 'isStudent' || e.target.name === 'student-delivery' || e.target.name === 'non-student-delivery') {
-                    updateCheckoutFormVisibility();
-                    updateCheckoutDeliveryFee();
-                }
-            });
-
-            document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
-        }
-
-        // --- FIREBASE LOGIC ---
         function updateCheckoutFormVisibility() {
             const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
             document.getElementById('student-form').style.display = isStudent ? 'block' : 'none';
             document.getElementById('non-student-form').style.display = isStudent ? 'none' : 'block';
-            
             if (isStudent) {
                 const isSchoolDelivery = document.querySelector('input[name="student-delivery"]:checked').value === 'school';
                 document.getElementById('student-delivery-address-container').style.display = isSchoolDelivery ? 'none' : 'block';
             }
         }
-
         function updateCheckoutDeliveryFee() {
             const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
             let fee = 0;
@@ -577,16 +884,13 @@
             }
             updateCartTotals(fee);
         }
-
         async function handlePlaceOrder() {
             const orderButton = document.getElementById('place-order');
-            orderButton.disabled = true;
-            orderButton.textContent = 'Placing Order...';
-            
+            disableButton(orderButton, 'Placing Order...'); // Disable and show loading
+
             const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
             let customerInfo = {};
             let validationError = false;
-
             if (isStudent) {
                 customerInfo = {
                     type: 'Student', name: document.getElementById('student-name').value, gradeSection: document.getElementById('grade-section').value,
@@ -603,25 +907,21 @@
                 };
                 if (!customerInfo.name || !customerInfo.address || !customerInfo.phone) validationError = true;
             }
-
             if (validationError) {
                 alert('Please fill in all required fields.');
-                orderButton.disabled = false;
-                orderButton.textContent = 'Place Order';
+                enableButton(orderButton); // Re-enable on error
                 return;
             }
-
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const deliveryFee = parseFloat(document.getElementById('checkout-delivery').textContent.replace('₱', ''));
             const total = subtotal + deliveryFee;
-
             const orderData = {
                 customerInfo,
-                items: cart.map(item => ({ 
-                    id: item.id, 
-                    name: item.name, 
-                    quantity: item.quantity, 
-                    price: item.price 
+                items: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
                 })),
                 subtotal,
                 deliveryFee,
@@ -629,31 +929,26 @@
                 status: 'Pending',
                 createdAt: new Date().toISOString()
             };
-
             try {
                 const newOrderRef = push(ref(db, 'orders'));
                 await set(newOrderRef, orderData);
-
                 closeModal('checkout-modal');
                 openModal('confirmation-modal');
                 cart = [];
-                updateCart();
+                updateCart(); // This will clear localStorage
             } catch (error) {
                 console.error("Error placing order: ", error);
                 alert("There was an error placing your order. Please try again.");
             } finally {
-                orderButton.disabled = false;
-                orderButton.textContent = 'Place Order';
+                enableButton(orderButton); // Always re-enable when done
             }
         }
-
         async function handleContactSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const feedbackEl = document.getElementById('contact-form-feedback');
             const button = form.querySelector('button[type="submit"]');
-            button.disabled = true;
-            button.textContent = 'Sending...';
+            disableButton(button, 'Sending...'); // Disable and show loading
 
             try {
                 const messageData = {
@@ -662,7 +957,6 @@
                 };
                 const newMessageRef = push(ref(db, 'messages'));
                 await set(newMessageRef, messageData);
-                
                 feedbackEl.textContent = "Thank you! Your message has been sent.";
                 feedbackEl.className = "text-emerald-400 text-center mt-4";
                 form.reset();
@@ -671,21 +965,17 @@
                 feedbackEl.textContent = "Sorry, there was an error. Please try again.";
                 feedbackEl.className = "text-red-400 text-center mt-4";
             } finally {
-                button.disabled = false;
-                button.textContent = 'Send';
+                enableButton(button); // Always re-enable when done
             }
         }
-
-        // --- UI & MODAL RENDERING ---
         function renderAllModals() {
             document.getElementById('modals-container').innerHTML = `
-                <!-- Cart Sidebar -->
                 <div id="cart-sidebar" class="fixed inset-0 z-50 hidden">
                     <div class="absolute inset-0 bg-gray-900 bg-opacity-75" id="close-cart-overlay"></div>
                     <div class="relative flex flex-col w-full max-w-md ml-auto h-full glass-card shadow-xl border-l border-gray-800">
                         <div class="p-6 flex justify-between items-center border-b border-gray-800">
                             <h2 class="text-2xl font-bold gradient-text">Your Cart</h2>
-                            <button id="close-cart" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+                            <button id="close-cart" class="text-gray-400 hover:text-white" aria-label="Close cart"><i class="fas fa-times text-xl"></i></button>
                         </div>
                         <div class="p-6 overflow-y-auto flex-grow space-y-4" id="cart-items"></div>
                         <div id="empty-cart-message" class="text-center py-10 hidden"><i class="fas fa-shopping-cart text-4xl text-gray-600 mb-4"></i><p class="text-gray-400">Your cart is empty</p></div>
@@ -699,58 +989,56 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Product Modal -->
                 <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('product-modal')"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('product-modal')" aria-hidden="true"></div>
                     <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-4xl w-full max-h-[90vh] flex flex-col">
-                         <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
-                             <div class="flex justify-between items-start mb-4">
-                                 <h3 id="modal-product-name" class="text-2xl leading-6 font-bold gradient-text"></h3>
-                                 <button id="close-modal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
-                             </div>
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                 <div>
-                                     <img id="modal-product-image" src="" alt="" class="w-full h-64 object-cover rounded-lg">
-                                     <div class="mt-4 flex items-center justify-between">
-                                         <span id="modal-product-price" class="text-2xl font-bold text-white"></span>
-                                         <div class="flex items-center space-x-2">
-                                             <button id="decrease-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-minus"></i></button>
-                                             <span id="product-quantity" class="text-white w-8 text-center font-bold text-lg">1</span>
-                                             <button id="increase-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button>
-                                         </div>
-                                     </div>
-                                      <div class="mt-4 p-3 bg-black bg-opacity-20 rounded-lg flex items-center">
-                                        <img id="distributor-logo" src="" class="w-10 h-10 rounded-full mr-3" onerror="this.onerror=null;this.src='https://placehold.co/40x40/FFFFFF/000000?text=D';">
+                        <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 id="modal-product-name" class="text-2xl leading-6 font-bold gradient-text"></h3>
+                                <button id="close-modal" class="text-gray-400 hover:text-white" aria-label="Close product details"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <img id="modal-product-image" src="" alt="" class="w-full h-64 object-cover rounded-lg">
+                                    <div class="mt-4 flex items-center justify-between">
+                                        <span id="modal-product-price" class="text-2xl font-bold text-white"></span>
+                                        <div class="flex items-center space-x-2">
+                                            <!-- Updated Quantity Controls -->
+                                            <button id="decrease-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center" aria-label="Decrease quantity"><i class="fas fa-minus"></i></button>
+                                            <input type="number" id="product-quantity-input" min="1" value="1" class="bg-gray-700 border border-gray-600 rounded text-center text-white w-12" aria-label="Quantity">
+                                            <button id="increase-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center" aria-label="Increase quantity"><i class="fas fa-plus"></i></button>
+                                            <!-- End Updated Quantity Controls -->
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 bg-black bg-opacity-20 rounded-lg flex items-center">
+                                        <img id="distributor-logo" src="" class="w-10 h-10 rounded-full mr-3" alt="">
                                         <span id="distributor-name" class="text-sm text-gray-300"></span>
-                                      </div>
-                                 </div>
-                                 <div class="space-y-4">
-                                     <div><h4 class="text-lg font-semibold text-white">Description</h4><p id="modal-product-description" class="text-gray-300"></p></div>
-                                     <div><h4 class="text-lg font-semibold text-white">Ingredients</h4><p id="modal-product-ingredients" class="text-gray-300 text-sm"></p></div>
-                                     <div><h4 class="text-lg font-semibold text-white">Tagline</h4><p id="modal-product-tagline" class="text-gray-300 italic"></p></div>
-                                     <div id="nutrition-container"><h4 class="text-lg font-semibold text-white">Nutrition Info</h4><p id="modal-product-nutrition" class="text-gray-300"></p></div>
-                                 </div>
-                             </div>
-                             <div class="mt-8 border-t border-gray-700 pt-6">
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div><h4 class="text-lg font-semibold text-white">Description</h4><p id="modal-product-description" class="text-gray-300"></p></div>
+                                    <div><h4 class="text-lg font-semibold text-white">Ingredients</h4><p id="modal-product-ingredients" class="text-gray-300 text-sm"></p></div>
+                                    <div><h4 class="text-lg font-semibold text-white">Tagline</h4><p id="modal-product-tagline" class="text-gray-300 italic"></p></div>
+                                    <div id="nutrition-container"><h4 class="text-lg font-semibold text-white">Nutrition Info</h4><p id="modal-product-nutrition" class="text-gray-300"></p></div>
+                                </div>
+                            </div>
+                            <div class="mt-8 border-t border-gray-700 pt-6">
                                 <h4 class="text-xl font-bold text-white mb-4 text-center">Meet the Creators</h4>
-                                <img id="team-image" src="" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Photo';">
-                             </div>
-                          </div>
-                          <div class="bg-black bg-opacity-20 px-4 py-3 sm:px-6 border-t border-gray-700">
-                              <button id="add-to-cart-modal" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Add to Cart</button>
-                          </div>
+                                <img id="team-image" src="" class="w-full h-auto rounded-lg" alt="">
+                            </div>
+                        </div>
+                        <div class="bg-black bg-opacity-20 px-4 py-3 sm:px-6 border-t border-gray-700">
+                            <button id="add-to-cart-modal" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Add to Cart</button>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Checkout Modal -->
                 <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('checkout-modal')"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('checkout-modal')" aria-hidden="true"></div>
                     <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-2xl w-full max-h-[90vh] flex flex-col">
                         <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-2xl leading-6 font-bold gradient-text">Checkout</h3>
-                                <button id="close-checkout-modal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+                                <button id="close-checkout-modal" class="text-gray-400 hover:text-white" aria-label="Close checkout"><i class="fas fa-times"></i></button>
                             </div>
                             <div class="space-y-6">
                                 <div>
@@ -759,8 +1047,8 @@
                                 </div>
                                 <div id="student-form">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label for="student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="student-name" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
-                                        <div><label for="grade-section" class="block text-sm font-medium text-gray-300 mb-1">Grade & Section *</label><input type="text" id="grade-section" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                        <div><label for="student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="student-name" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                        <div><label for="grade-section" class="block text-sm font-medium text-gray-300 mb-1">Grade & Section *</label><input type="text" id="grade-section" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
                                     </div>
                                     <div class="mt-4"><label for="student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
                                     <div class="mt-4"><label for="student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number</label><input type="tel" id="student-phone" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
@@ -768,13 +1056,13 @@
                                     <div id="student-delivery-address-container" class="mt-4 hidden"><label for="student-delivery-address" class="block text-sm font-medium text-gray-300 mb-1">Delivery Address</label><input type="text" id="student-delivery-address" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
                                 </div>
                                 <div id="non-student-form" class="hidden">
-                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                         <div><label for="non-student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="non-student-name" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
-                                         <div><label for="non-student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number *</label><input type="tel" id="non-student-phone" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
-                                     </div>
-                                     <div class="mt-4"><label for="non-student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="non-student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
-                                     <div class="mt-4"><label for="non-student-address" class="block text-sm font-medium text-gray-300 mb-1">Address *</label><input type="text" id="non-student-address" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
-                                     <div class="mt-4"><label class="block text-sm font-medium text-gray-300 mb-1">Delivery Option</label><div class="flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="pickup" class="form-radio"><span class="ml-2 text-gray-300">Self Pickup (Free)</span></label><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="delivery" class="form-radio" checked><span class="ml-2 text-gray-300">Delivery</span></label></div></div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><label for="non-student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="non-student-name" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                        <div><label for="non-student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number *</label><input type="tel" id="non-student-phone" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                    </div>
+                                    <div class="mt-4"><label for="non-student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="non-student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    <div class="mt-4"><label for="non-student-address" class="block text-sm font-medium text-gray-300 mb-1">Address *</label><input type="text" id="non-student-address" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                    <div class="mt-4"><label class="block text-sm font-medium text-gray-300 mb-1">Delivery Option</label><div class="flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="pickup" class="form-radio"><span class="ml-2 text-gray-300">Self Pickup (Free)</span></label><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="delivery" class="form-radio" checked><span class="ml-2 text-gray-300">Delivery</span></label></div></div>
                                 </div>
                                 <div class="mt-4"><label for="notes" class="block text-sm font-medium text-gray-300 mb-1">Special Requests/Notes</label><textarea id="notes" rows="2" class="form-input w-full rounded-md py-2 px-3 text-white"></textarea></div>
                                 <div class="mt-6 bg-black bg-opacity-20 p-4 rounded-lg">
@@ -790,14 +1078,12 @@
                             </div>
                         </div>
                         <div class="bg-black bg-opacity-20 px-4 py-3 sm:px-6 border-t border-gray-700">
-                             <button id="place-order" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Place Order</button>
+                            <button id="place-order" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Place Order</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Confirmation Modal -->
                 <div id="confirmation-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-gray-900 opacity-90" onclick="closeModal('confirmation-modal')"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-90" onclick="closeModal('confirmation-modal')" aria-hidden="true"></div>
                     <div class="relative glass-card rounded-lg text-center overflow-hidden shadow-xl transform transition-all sm:max-w-lg w-full p-6">
                         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-cyan-100"><i class="fas fa-check text-cyan-600 text-xl"></i></div>
                         <div class="mt-3">
@@ -810,51 +1096,200 @@
                         </div>
                     </div>
                 </div>
+                <!-- Product Variants Modal will be dynamically created here -->
             `;
         }
     </script>
-
     <script>
-        // --- Interactive 3D Background with Three.js ---
+        // --- Interactive 3D Background with Three.js (Slower, Parallax on Scroll) ---
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000); // Increased far plane for depth
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true, antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.position.setZ(5);
 
-        const pointLight1 = new THREE.PointLight(0x8A2BE2, 3);
-        pointLight1.position.set(25, 25, 25);
-        const pointLight2 = new THREE.PointLight(0x00BFFF, 3);
-        pointLight2.position.set(-25, -25, 25);
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        // --- CAMERA SETUP ---
+        // Position the camera further back and higher to see more of the scene
+        camera.position.set(0, 0, 300); // X, Y, Z
+        let targetCameraY = camera.position.y; // Target Y position for smooth scrolling
+
+        // --- LIGHTING ---
+        const pointLight1 = new THREE.PointLight(0x8A2BE2, 2, 500); // Increased intensity and distance
+        pointLight1.position.set(150, 150, 150);
+        const pointLight2 = new THREE.PointLight(0x00BFFF, 2, 500);
+        pointLight2.position.set(-150, -150, 150);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Slightly increased ambient
         scene.add(pointLight1, pointLight2, ambientLight);
 
         const allShapes = [];
-        const material = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.9, roughness: 0.1 });
+        // --- MATERIALS ---
+        const standardMaterial = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.9, roughness: 0.1 });
+        const textMaterial = new THREE.MeshStandardMaterial({ color: 0x00BFFF, emissive: 0x004466, metalness: 0.7, roughness: 0.2 });
 
-        // ... (createLogoGear, createDnaHelix, createAtom, createSolarSystem functions are the same)
+        // --- LOADING FONT FOR EQUATIONS ---
+        const loader = new THREE.FontLoader();
+        loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            // --- EQUATIONS ---
+            const equations = [
+                'E=mc²', 'F=ma', 'a²+b²=c²', 'e^{iπ}+1=0', 'H₂O', 'C₆H₁₂O₆',
+                'Φ', '∇·E=ρ/ε₀', 'ĤΨ=EΨ', 'ΣF=0', 'π', '∫', '√', '∞',
+                '∂', 'Δ', 'λ', 'Ω', 'PV=nRT', 'E=hf', 'F=dp/dt', 'S=k ln W'
+            ];
+
+            equations.forEach(eq => {
+                const textGeometry = new THREE.TextGeometry(eq, {
+                    font: font,
+                    size: 8, // Increased size
+                    height: 1,
+                    curveSegments: 8, // Reduced for performance
+                    bevelEnabled: true,
+                    bevelThickness: 0.3,
+                    bevelSize: 0.1,
+                    bevelSegments: 2
+                });
+                textGeometry.center();
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+                // --- INITIAL POSITIONING ---
+                // Place equations in a wide, deep area
+                const spreadX = 600;
+                const spreadY = 800; // Taller spread for scrolling effect
+                const spreadZ = 300;
+                textMesh.position.set(
+                    (Math.random() - 0.5) * spreadX,
+                    (Math.random() - 0.5) * spreadY,
+                    (Math.random() - 0.5) * spreadZ
+                );
+
+                // --- ROTATION ---
+                textMesh.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI * 0.5 - Math.PI * 0.25
+                );
+
+                // --- ANIMATION DATA ---
+                textMesh.userData = {
+                    rotationSpeed: {
+                        x: (Math.random() - 0.5) * 0.002, // Slower rotation
+                        y: (Math.random() - 0.5) * 0.002,
+                        z: (Math.random() - 0.5) * 0.001
+                    },
+                    pulseOffset: Math.random() * Math.PI * 2
+                };
+
+                allShapes.push(textMesh);
+                scene.add(textMesh);
+            });
+
+            // --- ASTRONAUT ---
+            function createSimpleAstronaut() {
+                const group = new THREE.Group();
+                const mat = standardMaterial;
+                const body = new THREE.Mesh(new THREE.CylinderGeometry(2, 1.5, 6, 16), mat);
+                body.position.y = 3;
+                group.add(body);
+                const head = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), mat);
+                head.position.y = 7;
+                group.add(head);
+                const helmet = new THREE.Mesh(new THREE.SphereGeometry(2.1, 16, 16), new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.6, metalness: 0.3, roughness: 0.1 }));
+                helmet.position.y = 7;
+                group.add(helmet);
+                const armGeom = new THREE.CylinderGeometry(0.5, 0.5, 5, 8);
+                const leftArm = new THREE.Mesh(armGeom, mat);
+                leftArm.position.set(-2.5, 3, 0);
+                leftArm.rotation.z = Math.PI / 2.5;
+                group.add(leftArm);
+                const rightArm = new THREE.Mesh(armGeom, mat);
+                rightArm.position.set(2.5, 3, 0);
+                rightArm.rotation.z = -Math.PI / 2.5;
+                group.add(rightArm);
+                const legGeom = new THREE.CylinderGeometry(0.6, 0.6, 5, 8);
+                const leftLeg = new THREE.Mesh(legGeom, mat);
+                leftLeg.position.set(-1, -2, 0);
+                group.add(leftLeg);
+                const rightLeg = new THREE.Mesh(legGeom, mat);
+                rightLeg.position.set(1, -2, 0);
+                group.add(rightLeg);
+                return group;
+            }
+
+            const astronaut = createSimpleAstronaut();
+            // Place astronaut in the center, further back
+            astronaut.position.set(0, 0, -100);
+            astronaut.scale.set(1.5, 1.5, 1.5);
+            astronaut.userData = {
+                rotationSpeed: { x: 0.001, y: 0.002, z: 0.0005 }, // Slow rotation
+                pulseOffset: Math.random() * Math.PI * 2,
+                // Make astronaut move slightly with scroll, but less than background elements
+                parallaxFactor: 0.3
+            };
+            allShapes.push(astronaut);
+            scene.add(astronaut);
+        });
+
+        // --- EXISTING SHAPES ---
+        function addShapeToScene(shape) {
+            // Place shapes in a very wide and deep area
+            const spreadX = 800;
+            const spreadY = 1000; // Taller spread
+            const spreadZ = 400;
+            shape.position.set(
+                (Math.random() - 0.5) * spreadX,
+                (Math.random() - 0.5) * spreadY,
+                (Math.random() - 0.5) * spreadZ
+            );
+            shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+
+            // --- ANIMATION DATA ---
+            shape.userData = {
+                rotationSpeed: { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.001 }, // Slower
+                pulseOffset: Math.random() * Math.PI * 2,
+                // Standard parallax factor for general shapes
+                parallaxFactor: 1.0
+            };
+
+            // --- ORBITING CHILDREN (Electrons, Planets) ---
+            shape.children.forEach(child => {
+                if (child instanceof THREE.Mesh && child.geometry.type === 'SphereGeometry') {
+                     // Assume spheres added after Torus are orbiting objects
+                    const parentHasOrbits = shape.children.some(c => c instanceof THREE.Mesh && c.geometry.type === 'TorusGeometry');
+                    if (parentHasOrbits) {
+                        child.userData = {
+                            orbitRadius: child.position.length(), // Calculate initial radius
+                            orbitSpeed: (Math.random() + 0.2) * 0.005, // Slower orbit
+                            orbitAngle: Math.random() * Math.PI * 2,
+                            // Orbiting objects move with their parent's parallax
+                            parallaxFactor: shape.userData.parallaxFactor
+                        };
+                    }
+                }
+            });
+
+            allShapes.push(shape);
+            scene.add(shape);
+        }
+
+        // --- SHAPE GENERATORS ---
         function createLogoGear() {
             const group = new THREE.Group();
-            const centralSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), material);
+            const centralSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), standardMaterial);
             group.add(centralSphere);
             for (let i = 0; i < 6; i++) {
                 const angle = (i / 6) * Math.PI * 2;
-                const petal = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), material);
+                const petal = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), standardMaterial);
                 petal.position.set(Math.cos(angle) * 1.5, Math.sin(angle) * 1.5, 0);
                 group.add(petal);
             }
-            group.scale.set(1.5, 1.5, 1.5);
+            group.scale.set(2.5, 2.5, 2.5); // Larger
             return group;
         }
-
         function createDnaHelix() {
             const group = new THREE.Group();
-            const radius = 2, height = 10, turns = 2, pairs = 20;
-            const sphereGeom = new THREE.SphereGeometry(0.3, 16, 16);
-            const purpleMat = new THREE.MeshStandardMaterial({ color: 0x8A2BE2, metalness: 0.9, roughness: 0.2 });
-            const cyanMat = new THREE.MeshStandardMaterial({ color: 0x00BFFF, metalness: 0.9, roughness: 0.2 });
-
+            const radius = 2.5, height = 15, turns = 2, pairs = 15;
+            const sphereGeom = new THREE.SphereGeometry(0.4, 8, 8);
+            const purpleMat = new THREE.MeshStandardMaterial({ color: 0x8A2BE2, metalness: 0.8, roughness: 0.2 });
+            const cyanMat = new THREE.MeshStandardMaterial({ color: 0x00BFFF, metalness: 0.8, roughness: 0.2 });
             for (let i = 0; i < pairs; i++) {
                 const y = (i / pairs) * height - height / 2;
                 const angle = (i / pairs) * Math.PI * 2 * turns;
@@ -866,151 +1301,151 @@
             }
             return group;
         }
-
         function createAtom() {
             const group = new THREE.Group();
-            group.add(new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), material));
+            const nucleus = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), standardMaterial);
+            group.add(nucleus);
             for (let i = 0; i < 3; i++) {
-                const orbit = new THREE.Mesh(new THREE.TorusGeometry(3 + i * 1.5, 0.05, 16, 100), new THREE.MeshBasicMaterial({ color: 0x777777 }));
-                orbit.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+                const orbitRadius = 6 + i * 2;
+                const orbit = new THREE.Mesh(new THREE.TorusGeometry(orbitRadius, 0.1, 8, 64), new THREE.MeshBasicMaterial({ color: 0x777777 }));
+                orbit.rotation.x = Math.PI / 2;
+                orbit.rotation.z = Math.random() * Math.PI;
                 group.add(orbit);
-                const electron = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), material);
-                electron.userData = { orbitRadius: 3 + i * 1.5, orbitSpeed: (Math.random() + 0.5) * 0.01, orbitAngle: Math.random() * Math.PI * 2 };
+                const electron = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), standardMaterial);
+                // Electron position will be set by animation loop
                 group.add(electron);
             }
             return group;
         }
-        
         function createSolarSystem() {
             const group = new THREE.Group();
-            const sun = new THREE.Mesh(new THREE.SphereGeometry(4, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffcc33, emissive: 0xffcc33, metalness: 0.8, roughness: 0.2 }));
+            const sunMat = new THREE.MeshStandardMaterial({ color: 0xffcc33, emissive: 0x442200, metalness: 0.5, roughness: 0.3 });
+            const sun = new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), sunMat);
             group.add(sun);
             for (let i = 0; i < 5; i++) {
-                const planet = new THREE.Mesh(new THREE.SphereGeometry(0.5 + Math.random() * 0.5, 16, 16), material);
-                planet.userData = { orbitRadius: 8 + i * 4, orbitSpeed: (Math.random() + 0.5) * 0.005, orbitAngle: Math.random() * Math.PI * 2 };
+                const planetGeom = new THREE.SphereGeometry(0.8 + Math.random() * 0.8, 16, 16);
+                const planet = new THREE.Mesh(planetGeom, standardMaterial);
+                // Planet position will be set by animation loop
                 group.add(planet);
             }
             return group;
         }
-
-        const loader = new THREE.FontLoader();
-        loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-            const equations = ['E=mc²', 'F=ma', 'a²+b²=c²', 'H₂O', 'C₆H₁₂O₆', 'ΣF=0', 'π', '∫', '√', '∞', '∂', 'Δ', 'λ', 'Ω'];
-            const textMaterial = new THREE.MeshStandardMaterial({ color: 0x00BFFF, metalness: 0.9, roughness: 0.1 });
-            
-            equations.forEach(eq => {
-                const textGeometry = new THREE.TextGeometry(eq, {
-                    font: font,
-                    size: 3,
-                    height: 0.5,
-                });
-                textGeometry.center();
-                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-                addShapeToScene(textMesh);
-            });
-        });
-
-        function addShapeToScene(shape) {
-             const [x, y, z] = [
-                THREE.MathUtils.randFloatSpread(300), 
-                THREE.MathUtils.randFloatSpread(1000), // Increased vertical spread
-                THREE.MathUtils.randFloatSpread(300)
-             ];
-            shape.position.set(x, y, z);
-            shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-            shape.userData.rotationSpeed = { x: (Math.random() - 0.5) * 0.005, y: (Math.random() - 0.5) * 0.005, z: 0 };
-            shape.userData.pulseOffset = Math.random() * Math.PI;
-            allShapes.push(shape);
-            scene.add(shape);
-        }
-
         const shapeGenerators = [
-            createLogoGear, createDnaHelix, createAtom, createSolarSystem, 
-            () => new THREE.Mesh(new THREE.TetrahedronGeometry(3, 0), material), 
-            () => new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), material),
-            () => new THREE.Mesh(new THREE.OctahedronGeometry(3, 0), material),
-            () => new THREE.Mesh(new THREE.IcosahedronGeometry(3, 0), material),
-            () => new THREE.Mesh(new THREE.TorusKnotGeometry(2, 0.5, 100, 16), material)
+            createLogoGear, createDnaHelix, createAtom, createSolarSystem,
+            () => new THREE.Mesh(new THREE.TetrahedronGeometry(5, 0), standardMaterial),
+            () => new THREE.Mesh(new THREE.DodecahedronGeometry(5, 0), standardMaterial),
+            () => new THREE.Mesh(new THREE.OctahedronGeometry(5, 0), standardMaterial),
+            () => new THREE.Mesh(new THREE.IcosahedronGeometry(5, 0), standardMaterial),
+            () => new THREE.Mesh(new THREE.TorusKnotGeometry(3, 1, 100, 16), standardMaterial)
         ];
-        for (let i = 0; i < 220; i++) { // Increased total number of elements
+        // Create background shapes
+        for (let i = 0; i < 150; i++) { // Reduced number slightly for performance
             const shape = shapeGenerators[i % shapeGenerators.length]();
             addShapeToScene(shape);
         }
-        
-        // Add starfield
+
+        // --- STARS ---
         const starVertices = [];
-        for (let i = 0; i < 15000; i++) {
-            const x = THREE.MathUtils.randFloatSpread(2000);
-            const y = THREE.MathUtils.randFloatSpread(2000);
-            const z = THREE.MathUtils.randFloatSpread(2000);
+        for (let i = 0; i < 20000; i++) { // More stars
+            const x = THREE.MathUtils.randFloatSpread(3000); // Wider spread
+            const y = THREE.MathUtils.randFloatSpread(3000);
+            const z = THREE.MathUtils.randFloatSpread(1000); // Shallower spread for stars
             starVertices.push(x, y, z);
         }
         const starGeometry = new THREE.BufferGeometry();
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.7 });
+        const starMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 1.5, sizeAttenuation: true }); // Larger stars
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
-
-        let mouseX = 0, mouseY = 0;
+        // --- MOUSE PARALLAX ---
+        let mouseX = 0;
         function updateMousePosition(event) {
             const x = event.touches ? event.touches[0].clientX : event.clientX;
-            const y = event.touches ? event.touches[0].clientY : event.clientY;
-            mouseX = (x / window.innerWidth) * 2 - 1;
-            mouseY = -(y / window.innerHeight) * 2 + 1;
+            // Map mouse X from -1 to 1, but with a smaller range for subtlety
+            mouseX = ((x / window.innerWidth) * 2 - 1) * 0.5;
         }
         document.addEventListener('mousemove', updateMousePosition);
         document.addEventListener('touchmove', updateMousePosition, { passive: true });
 
-        function moveCamera() {
-            const t = document.body.getBoundingClientRect().top;
-            camera.position.y = t * 0.05;
+        // --- SCROLL PARALLAX ---
+        let scrollY = 0;
+        function updateScrollPosition() {
+            scrollY = window.scrollY;
+            // Update the target camera Y position based on scroll
+            // Invert scroll effect so content appears to move 'into' the background
+            targetCameraY = (scrollY * 0.3); // Adjust 0.3 for stronger/weaker effect
         }
-        document.body.onscroll = moveCamera;
-        moveCamera();
+        window.addEventListener('scroll', updateScrollPosition);
 
+        // --- ANIMATION LOOP ---
         const clock = new THREE.Clock();
+
         function animate() {
             const elapsedTime = clock.getElapsedTime();
             requestAnimationFrame(animate);
 
-            // Animate shapes
+            // --- SMOOTH CAMERA SCROLLING ---
+            // Smoothly interpolate camera Y position towards the target
+            camera.position.y += (targetCameraY - camera.position.y) * 0.05; // Adjust 0.05 for smoother/faster catch-up
+
+            // --- MOUSE PARALLAX ---
+            // Move camera slightly left/right based on mouse
+            camera.position.x += (mouseX * 20 - camera.position.x) * 0.03; // Adjusted strength
+
+            // --- ROTATE CAMERA FOR SUBTLE EFFECT ---
+            //camera.rotation.y = mouseX * 0.05; // Very subtle rotation based on mouse
+
+            // --- UPDATE SHAPES ---
             allShapes.forEach(shape => {
-                shape.rotation.x += shape.userData.rotationSpeed.x;
-                shape.rotation.y += shape.userData.rotationSpeed.y;
+                // --- ROTATION ---
+                if (shape.userData.rotationSpeed) {
+                    shape.rotation.x += shape.userData.rotationSpeed.x;
+                    shape.rotation.y += shape.userData.rotationSpeed.y;
+                    shape.rotation.z += shape.userData.rotationSpeed.z || 0;
+                }
 
-                // Pulsing effect
-                const pulse = Math.sin(elapsedTime + shape.userData.pulseOffset) * 0.05 + 0.95;
-                shape.scale.set(pulse, pulse, pulse);
+                // --- PULSING SCALE ---
+                if (shape.userData.pulseOffset !== undefined) {
+                    const pulse = Math.sin(elapsedTime * 1.5 + shape.userData.pulseOffset) * 0.03 + 0.97; // Slower, subtler pulse
+                    shape.scale.set(pulse, pulse, pulse);
+                }
 
-                // Animate sub-components (electrons, planets)
+                // --- ORBITING ELECTRONS/PLANETS ---
                 shape.children.forEach(child => {
-                    if (child.userData.orbitRadius) {
+                    if (child.userData && child.userData.orbitRadius) {
                         child.userData.orbitAngle += child.userData.orbitSpeed;
                         const r = child.userData.orbitRadius;
-                        child.position.set(Math.cos(child.userData.orbitAngle) * r, Math.sin(child.userData.orbitAngle) * r, 0);
+                        // Orbit in XZ plane
+                        child.position.x = Math.cos(child.userData.orbitAngle) * r;
+                        child.position.z = Math.sin(child.userData.orbitAngle) * r;
                     }
                 });
             });
-            
-            // Animate lights
-            pointLight1.position.x = Math.sin(elapsedTime * 0.5) * 30;
-            pointLight1.position.z = Math.cos(elapsedTime * 0.5) * 30;
-            pointLight2.position.x = Math.sin(elapsedTime * 0.3) * -30;
-            pointLight2.position.z = Math.cos(elapsedTime * 0.3) * -30;
 
-            // Parallax effect for mouse movement
-            camera.position.x += (mouseX * 5 - camera.position.x) * 0.02;
-            
+            // --- MOVE LIGHTS SUBTLY ---
+            pointLight1.position.x = Math.sin(elapsedTime * 0.2) * 200; // Slower light movement
+            pointLight1.position.y = Math.cos(elapsedTime * 0.25) * 150 + camera.position.y; // Follow camera Y slightly
+            pointLight1.position.z = Math.cos(elapsedTime * 0.15) * 150 + 100;
+
+            pointLight2.position.x = Math.cos(elapsedTime * 0.18) * -200;
+            pointLight2.position.y = Math.sin(elapsedTime * 0.22) * -150 + camera.position.y;
+            pointLight2.position.z = Math.sin(elapsedTime * 0.12) * -150 + 100;
+
             renderer.render(scene, camera);
         }
         animate();
 
-        window.addEventListener('resize', () => {
+        // --- RESIZE HANDLER ---
+        function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        }
+        window.addEventListener('resize', onWindowResize);
+
+        // Initial scroll update
+        updateScrollPosition();
     </script>
 </body>
 </html>
