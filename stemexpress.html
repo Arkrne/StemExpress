@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Added Meta Description for SEO -->
-    <meta name="description" content="Pre-order delicious and innovative STEM products from Catanduanes National High School students.">
     <title>STEM Express - Your One Stop, STEM Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +22,6 @@
             color: #e5e7eb;
             overflow-x: hidden;
         }
-        /* NEW: Hide scrollbar during preloader animation */
         body.loading {
             overflow: hidden;
         }
@@ -59,11 +56,11 @@
         }
         .view-toggle-btn {
             background-color: transparent;
-            color: #9ca3af; /* gray-400 */
+            color: #9ca3af;
             transition: all 0.3s ease-in-out;
             padding: 0.5rem 1rem;
-            border-radius: 0.375rem; /* rounded-md */
-            font-weight: 600; /* semibold */
+            border-radius: 0.375rem;
+            font-weight: 600;
         }
         .view-toggle-btn.active {
             background: linear-gradient(90deg, #8A2BE2, #00BFFF);
@@ -103,7 +100,6 @@
                 filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.8));
             }
         }
-        /* --- NEW: Preloader and Animation Styles --- */
         #preloader {
             transition: opacity 0.75s ease-in-out, transform 0.75s ease-in-out;
         }
@@ -120,7 +116,6 @@
             25% { transform: rotate(8deg) scale(1.05); }
             75% { transform: rotate(-8deg) scale(1.05); }
         }
-        /* Hide main content initially */
         #main-content {
             opacity: 0;
             transition: opacity 1s ease-in-out;
@@ -194,7 +189,7 @@
                         </div>
                     </div>
                     <div id="business-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                        </div>
+                    </div>
                 </div>
             </section>
             <section id="all-products" class="py-12 hidden">
@@ -207,7 +202,7 @@
                         </div>
                     </div>
                     <div id="all-products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                        </div>
+                    </div>
                 </div>
             </section>
         </div>
@@ -220,7 +215,7 @@
                 </div>
                 <h2 id="products-heading" class="text-3xl md:text-4xl font-bold text-center mb-12 text-white"></h2>
                 <div id="single-shop-product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                    </div>
+                </div>
             </div>
         </section>
         <section id="about" class="py-20">
@@ -282,7 +277,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
         import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
-        // Your web app's Firebase configuration
+        
         const firebaseConfig = {
             apiKey: "AIzaSyDgKCFUvQ___3HXsT9xLA3ZIbchywwpY6M",
             authDomain: "stem-express-9512e.firebaseapp.com",
@@ -293,39 +288,54 @@
             appId: "1:577722816518:web:e6c626c820d4d54a794b87",
             measurementId: "G-W2BL0DXXG3"
         };
-        // Initialize Firebase
+        
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        // --- DATA ---
+        
+        // --- NEW DATA ---
         const products = [
-             { id: 1, name: "Utenseed", price: 20, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Utenseed", description: "Utenseed refers to various types of bio-plastic-based utensils that have seeds embedded in them. Upon the Utenseed’s disposal, it will eventually dissolve and release the embedded seeds which will sprout into various plants.", ingredients: "Distilled water, glycerin, starch, vinegar, plant seeds", tagline: "Toss it, Grow it", distributor: { name: "Utenseed", logoUrl: "https://i.postimg.cc/hG9WZcGw/513056033-1433567197951836-4852679104130171883-n.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Utenseed" } },
-             { id: 2, name: "Kamias Tea", price: 50, image: "https://i.postimg.cc/dQTsGP2b/Kamias-Brew-Mockup.png", description: "Crafted from hand-picked, naturally dried kamías leaves, Kamías Brew is a caffeine-free herbal tea with a distinct citrusy aroma and refreshing flavor.", ingredients: "Dried Kamias Leaves", tagline: "Balance your day, the kamias way", distributor: { name: "Kamias Brew", logoUrl: "https://i.postimg.cc/5jcDSrV1/Minimalistic-logo-final.png", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Kamias" } },
-             { id: 3, name: "Ampamote Bites", price: 45, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Ampamote", description: "A crispy and healthy snack made from kamote and ampalaya, available in different flavors like cheese, barbeque, and sourcream. Each bite offers a balance of natural sweetness and mild bitterness.", ingredients: "Sweet potato (kamote), bitter gourd (ampalaya), flavorings", tagline: "From bitter to better.", distributor: { name: "AmpaLicious", logoUrl: "https://i.postimg.cc/fbDxGfKK/534189282-1691202938347622-8919327558003570805-n.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+AmpaLicious" } },
-             { id: 4, name: "Calafizz", price: 55, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Calafizz", description: "A refreshing, all-natural soda made from calamansi juice and fermented using a homemade ginger bug, offering a probiotic-rich, lightly fizzy drink that supports gut health.", ingredients: "Calamansi juice, ginger bug (ginger, sugar, water)", tagline: "Made with culture, literally", distributor: { name: "Calafizz", logoUrl: "https://i.postimg.cc/9QvkZKcf/511194937-2166103290477492-3371060039443138167-n.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Calafizz" } },
-             { id: 5, name: "Spicy Mango Popsicle (Toasted Coconut)", price: 35, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=ChiBu+Coconut", description: "A one-of-a-kind frozen snack experience — the perfect mix of sweet, spicy, and refreshing. Crafted from fresh ripe mangoes, blended with a special chili mix and coated in chocolate and toasted coconut.", ingredients: "Mango, chili, chocolate, toasted coconut", tagline: "Chill to the Burn", distributor: { name: "Chill & Burn", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=ChiBu", teamImage: "https://i.postimg.cc/RFCLHLJF/Chi-Bu-Team-Picture.jpg" } },
-             { id: 6, name: "Spicy Mango Popsicle (Tajín Twist)", price: 35, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=ChiBu+Tajn", description: "A one-of-a-kind frozen snack experience — the perfect mix of sweet, spicy, and refreshing. Crafted from fresh ripe mangoes, blended with a special chili mix and coated in chocolate and tangy Tajín powder.", ingredients: "Mango, chili, chocolate, Tajín powder", tagline: "Chill to the Burn", distributor: { name: "Chill & Burn", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=ChiBu", teamImage: "https://i.postimg.cc/RFCLHLJF/Chi-Bu-Team-Picture.jpg" } },
-             { id: 7, name: "Pastillas de Lubi-lubi", price: 40, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Pastillas", description: "A self-made milk chew candy mixed with natural extracts from the Lubi-Lubi (Ficus pseudopalma) plant, which is known for its health benefits. This creamy and bittersweet treat gives antioxidants and supports blood sugar regulation.", ingredients: "Milk, sugar, Lubi-Lubi (Ficus pseudopalma) extract", tagline: "A taste of tradition, a touch of nature.", distributor: { name: "Pastillas de Lubi-lubi", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=PDL", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Pastillas" } },
-             { id: 8, name: "Gummified", price: 30, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Gummified", description: "A chewy, flavourful treat made from fresh upo—perfect for guilt-free snacking. Sustainably crafted and subtly sweet, it’s a fun way to enjoy healthy indulgence.", ingredients: "Upo (bottle gourd), gelatin, natural sweeteners", tagline: "nakUPO! GUMMYgiling sa sarap!", distributor: { name: "Gummified", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=G", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Gummified" } },
-             { id: 9, name: "PinoBread (Classic)", price: 60, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=PinoBread", description: "A unique and healthier bread that uses healthy baking methods and the mild, refreshing taste of cucumber. The Classic Original is light and versatile.", ingredients: "Flour, cucumber puree, yeast, natural ingredients", tagline: "Fine by me, Healteh!", distributor: { name: "PinoBread", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=PB", teamImage: "https://i.postimg.cc/44PprS2F/Messenger-creation-1863452830912427.jpg" } },
-             { id: 10, name: "PinoBread (Cheesy Delight)", price: 65, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=PinoBread+Cheese", description: "A unique and healthier bread that uses healthy baking methods and the mild, refreshing taste of cucumber. Cheesy Delight is full of creamy cheese for a savory experience.", ingredients: "Flour, cucumber puree, cheese, yeast", tagline: "Fine by me, Healteh!", distributor: { name: "PinoBread", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=PB", teamImage: "https://i.postimg.cc/44PprS2F/Messenger-creation-1863452830912427.jpg" } },
-             { id: 11, name: "PinoBread (Mango Delecta)", price: 65, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=PinoBread+Mango", description: "A unique and healthier bread that uses healthy baking methods and the mild, refreshing taste of cucumber. Mango Delecta has a rich sweet and delicate taste, perfect for sweet bites.", ingredients: "Flour, cucumber puree, mango bits, yeast", tagline: "Fine by me, Healteh!", distributor: { name: "PinoBread", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=PB", teamImage: "https://i.postimg.cc/44PprS2F/Messenger-creation-1863452830912427.jpg" } },
-             { id: 12, name: "PiliSpark Fire Starter", price: 50, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=PiliSpark", description: "An eco-friendly fire starter made from beeswax or soy wax, cotton, recycled paper, and pili shells and peelings sourced from local farmers. A safe, affordable, and non-toxic alternative.", ingredients: "Beeswax/soy wax, cotton, recycled paper, pili shells", tagline: "Basura to Pulbura", distributor: { name: "Pilino", logoUrl: "https://i.postimg.cc/rmbg2tzw/Chosen-Logo-w-background.png", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Pilino" } },
-             { id: 13, name: "TiO2mist Fabric Spray", price: 120, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=TiO2mist", description: "A self-cleaning fabric spray that uses titanium dioxide technology to keep clothes fresh while reducing water use, detergent costs, and time spent on laundry.", ingredients: "Titanium dioxide solution, distilled water, essential oils", tagline: "Spray, dry, and go.", distributor: { name: "Pilino", logoUrl: "https://i.postimg.cc/rmbg2tzw/Chosen-Logo-w-background.png", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Pilino" } },
-             { id: 14, name: "Mossy Munch (Mini Pack)", price: 15, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Mossy+Munch", description: "Nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering a healthy, eco-friendly, and affordable alternative to junk food.", ingredients: "Guso (seaweed), mung beans, malunggay leaves", tagline: "Seaweed never tasted so good.", distributor: { name: "Moringo", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=MM", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Moringo" } },
-             { id: 15, name: "Mossy Munch (Snack Pack)", price: 25, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Mossy+Munch", description: "Nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering a healthy, eco-friendly, and affordable alternative to junk food.", ingredients: "Guso (seaweed), mung beans, malunggay leaves", tagline: "Seaweed never tasted so good.", distributor: { name: "Moringo", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=MM", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Moringo" } },
-             { id: 16, name: "Mossy Munch (Family Pack)", price: 55, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Mossy+Munch", description: "Nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering a healthy, eco-friendly, and affordable alternative to junk food.", ingredients: "Guso (seaweed), mung beans, malunggay leaves", tagline: "Seaweed never tasted so good.", distributor: { name: "Moringo", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=MM", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Moringo" } },
-             { id: 17, name: "WheyBight Delights (Chocolate Blast)", price: 70, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=WheyBight", description: "A healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful.", ingredients: "Whey protein, flour, sugar, milk powder, chocolate", tagline: "Fulfill your day, The tasty whey", distributor: { name: "WheyBight", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=WB", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+WheyBight" } },
-             { id: 18, name: "WheyBight Delights (Cookies & Cream)", price: 70, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=WheyBight", description: "A healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful.", ingredients: "Whey protein, flour, sugar, milk powder, cookie bits", tagline: "Fulfill your day, The tasty whey", distributor: { name: "WheyBight", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=WB", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+WheyBight" } },
-             { id: 19, name: "EcoClean Pods (Lemon Fresh)", price: 80, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=EcoClean", description: "Easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution.", ingredients: "Biodegradable surfactants, lemon essential oil", tagline: "Clean smarter. Live greener.", distributor: { name: "EcoClean", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+EcoClean" } },
-             { id: 20, name: "EcoClean Pods (Tea Tree Shield)", price: 80, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=EcoClean", description: "Easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution.", ingredients: "Biodegradable surfactants, tea tree oil", tagline: "Clean smarter. Live greener.", distributor: { name: "EcoClean", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+EcoClean" } },
-             { id: 21, name: "EcoClean Pods (Lavender Relax)", price: 80, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=EcoClean", description: "Easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution.", ingredients: "Biodegradable surfactants, lavender essential oil", tagline: "Clean smarter. Live greener.", distributor: { name: "EcoClean", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+EcoClean" } },
-             { id: 22, name: "Abaca Blossom Tea (Original)", price: 50, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=TsaAbaca", description: "A sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=TA", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+TsaAbaca" } },
-             { id: 23, name: "Abaca Blossom Tea (Ginger)", price: 55, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=TsaAbaca", description: "A sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms, ginger", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=TA", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+TsaAbaca" } },
-             { id: 24, name: "Abaca Blossom Tea (Oregano)", price: 55, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=TsaAbaca", description: "A sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms, oregano", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=TA", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+TsaAbaca" } },
-             { id: 25, name: "Abaca Blossom Tea (Pandan)", price: 55, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=TsaAbaca", description: "A sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms, pandan", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=TA", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+TsaAbaca" } },
-             { id: 26, name: "Fibedible Packaging", price: 100, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Fibedible", description: "An innovative, edible packaging solution designed to reduce waste. Perfect for wrapping snacks and other small food items, it's the ultimate in sustainable convenience.", ingredients: "Food-grade biopolymers, natural fibers", tagline: "Given by Nature, Crafted by Us", distributor: { name: "BioCraft", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=BC", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+BioCraft" } },
-             { id: 27, name: "Pao-Pao Express", price: 75, image: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Pao-Pao", description: "An innovative culinary creation that combines the beloved Filipino siopao with the rich, spicy flavors of Bicol Express. A unique and exciting twist on two classic dishes.", ingredients: "Flour, pork, coconut milk, shrimp paste, chili", tagline: "Your Chow? PaoPao!", distributor: { name: "Pao-Pao Express", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=PPE", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Pao-Pao" } }
+            { id: 1, name: "Organic Lip Balm", price: 0, image: "https://i.postimg.cc/Wb1LJ8yq/Tintless-Lip-Balm-Sample-2.jpg", description: "Florelle is a handmade natural lip balm made with beeswax, shea butter, coconut oil, and essential oils to nourish lips while adding a touch of tint. Eco-friendly and affordable, it comes in biodegradable bamboo packaging, blending beauty, wellness, and sustainability.", ingredients: "Beeswax, shea butter, coconut oil, essential oils", tagline: "Bloom with every swipe", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/QMTrdMy6/LOGO.jpg", teamImage: "https://i.postimg.cc/qRcqgw5Z/d304dd28-7254-4455-8cbd-1445e6688bf9.jpg" } },
+            { id: 2, name: "Pocket Aura", price: 0, image: "", description: "Pocket Aura is a solid, eco-friendly perfume inspired by local scents like pandan, sampaguita, and orange peel, designed to be simple, lasting, and portable. Compact and spill-free, it lets you carry not just a fragrance, but a personal story in your pocket.", ingredients: "Pandan, sampaguita, orange peel extracts", tagline: "Bloom with every swipe", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/QMTrdMy6/LOGO.jpg", teamImage: "https://i.postimg.cc/qRcqgw5Z/d304dd28-7254-4455-8cbd-1445e6688bf9.jpg" } },
+            { id: 3, name: "PiliSpark", price: 0, image: "https://i.postimg.cc/3rG1W1k3/chosen-edited-product-picture.png", description: "PiliSpark is an eco-friendly fire starter made from beeswax or soy wax, cotton, recycled paper, and pili shells and peelings sourced from local farmers. It supports waste reduction and local livelihoods while providing a safe, affordable, and non-toxic alternative to commercial fire starters.", ingredients: "Beeswax/soy wax, cotton, recycled paper, pili shells", tagline: "Basura to Pulbura", distributor: { name: "Pilino", logoUrl: "https://i.postimg.cc/rmbg2tzw/Chosen-Logo-w-background.png", teamImage: "https://i.postimg.cc/8Cw3KHh2/Pilino-group-picture.avif" } },
+            { id: 4, name: "TiO2mist", price: 0, image: "https://i.postimg.cc/FK9FkTr8/531556760-1804234700975450-6069498273987349863-n.jpg", description: "TiO2mist is a self-cleaning fabric spray that uses titanium dioxide technology to keep clothes fresh while reducing water use, detergent costs, and time spent on laundry. Positioned in the eco-friendly household product industry, it will initially be distributed through online retail platforms.", ingredients: "Titanium dioxide, distilled water", tagline: "Spray, dry, and go.", distributor: { name: "Pilino", logoUrl: "https://i.postimg.cc/VLL3t2nj/Your-paragraph-text-4.png", teamImage: "https://i.postimg.cc/8Cw3KHh2/Pilino-group-picture.avif" } },
+            { id: 5, name: "Mossy Munch (Mini Pack)", price: 15, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Moringo are nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering iodine, protein, iron, and other essential nutrients. With a soft, chewy texture and savory umami flavor, they serve as a healthy, eco-friendly, and affordable alternative to junk food, perfect for any time of the day.", ingredients: "Guso (seaweed), mung beans, malunggay leaves", tagline: "Seaweed never tasted so good.", distributor: { name: "Moringo", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=M", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Moringo" } },
+            { id: 6, name: "Mossy Munch (Snack Pack)", price: 25, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Moringo are nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering iodine, protein, iron, and other essential nutrients. With a soft, chewy texture and savory umami flavor, they serve as a healthy, eco-friendly, and affordable alternative to junk food, perfect for any time of the day.", ingredients: "Guso (seaweed), mung beans, malunggay leaves", tagline: "Seaweed never tasted so good.", distributor: { name: "Moringo", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=M", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Moringo" } },
+            { id: 7, name: "Mossy Munch (Family Pack)", price: 55, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Moringo are nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering iodine, protein, iron, and other essential nutrients. With a soft, chewy texture and savory umami flavor, they serve as a healthy, eco-friendly, and affordable alternative to junk food, perfect for any time of the day.", ingredients: "Guso (seaweed), mung beans, malunggay leaves", tagline: "Seaweed never tasted so good.", distributor: { name: "Moringo", logoUrl: "https://placehold.co/100x100/1a1a1a/FFFFFF?text=M", teamImage: "https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Moringo" } },
+            { id: 8, name: "WheyBight Delights (Chocolate Blast)", price: 0, image: "https://i.postimg.cc/1XQ4MwDN/529456771-1996338247796104-1230219555997373763-n.jpg", description: "WheyBight Delights is a healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful—this protein-packed treat satisfies your cravings while fueling your body.", ingredients: "Whey protein, flour, sugar, milk powder", tagline: "Fulfill your day, The tasty whey", distributor: { name: "WheyBight", logoUrl: "https://i.postimg.cc/W1687wr0/521393652-2944548202383541-8995479539948762165-n.jpg", teamImage: "https://i.postimg.cc/vmZrtFGd/IMG-20250818-161315.jpg" } },
+            { id: 9, name: "WheyBight Delights (Cookies & Cream Crunch)", price: 0, image: "https://i.postimg.cc/ZR3CrVvS/531572078-614712121432826-9155339253311664220-n.jpg", description: "WheyBight Delights is a healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful—this protein-packed treat satisfies your cravings while fueling your body.", ingredients: "Whey protein, flour, sugar, milk powder", tagline: "Fulfill your day, The tasty whey", distributor: { name: "WheyBight", logoUrl: "https://i.postimg.cc/W1687wr0/521393652-2944548202383541-8995479539948762165-n.jpg", teamImage: "https://i.postimg.cc/vmZrtFGd/IMG-20250818-161315.jpg" } },
+            { id: 10, name: "EcoClean Pods (Lemon Fresh)", price: 0, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", ingredients: "Biodegradable surfactants, lemon essential oil", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 11, name: "EcoClean Pods (Tea Tree Shield)", price: 0, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", ingredients: "Biodegradable surfactants, tea tree oil", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 12, name: "EcoClean Pods (Lavender Relax)", price: 0, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", ingredients: "Biodegradable surfactants, lavender essential oil", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 13, name: "Abaca Blossom Tea (Original)", price: 0, image: "", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Available in pure abaca, ginger, oregano, and pandan variants, it promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 14, name: "Abaca Blossom Tea (Ginger)", price: 0, image: "", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Available in pure abaca, ginger, oregano, and pandan variants, it promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms, ginger", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 15, name: "Abaca Blossom Tea (Oregano)", price: 0, image: "", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Available in pure abaca, ginger, oregano, and pandan variants, it promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms, oregano", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 16, name: "Abaca Blossom Tea (Pandan)", price: 0, image: "", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. Available in pure abaca, ginger, oregano, and pandan variants, it promotes local farming while providing a comforting and memorable tea experience.", ingredients: "Abaca blossoms, pandan", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 17, name: "Mochill (Vanilla)", price: 15, image: "", description: "Soft, chewy mochi wrapped around an ice cream—infused with ampalaya for a healthier twist served with the flavor of your choice: Vanilla, Strawberry, Chocolate.", ingredients: "Mochi, ice cream, ampalaya extract", tagline: "When the Heat Hits, Get Chilled with Mochill!", distributor: { name: "Chilla' Treats", logoUrl: "https://i.postimg.cc/vmkPNHqs/Chilla-s-Treats-Business-Logo.jpg", teamImage: "" } },
+            { id: 18, name: "Mochill (Strawberry)", price: 15, image: "", description: "Soft, chewy mochi wrapped around an ice cream—infused with ampalaya for a healthier twist served with the flavor of your choice: Vanilla, Strawberry, Chocolate.", ingredients: "Mochi, ice cream, ampalaya extract", tagline: "When the Heat Hits, Get Chilled with Mochill!", distributor: { name: "Chilla' Treats", logoUrl: "https://i.postimg.cc/vmkPNHqs/Chilla-s-Treats-Business-Logo.jpg", teamImage: "" } },
+            { id: 19, name: "Mochill (Chocolate)", price: 15, image: "", description: "Soft, chewy mochi wrapped around an ice cream—infused with ampalaya for a healthier twist served with the flavor of your choice: Vanilla, Strawberry, Chocolate.", ingredients: "Mochi, ice cream, ampalaya extract", tagline: "When the Heat Hits, Get Chilled with Mochill!", distributor: { name: "Chilla' Treats", logoUrl: "https://i.postimg.cc/vmkPNHqs/Chilla-s-Treats-Business-Logo.jpg", teamImage: "" } },
+            { id: 20, name: "Pao-Pao", price: 0, image: "https://i.postimg.cc/7ZVh95L5/528884249-1031333439078773-6828468043157419221-n.jpg", description: "Pao-Pao Express is an innovative culinary creation that combines the beloved Filipino siopao with the rich, spicy flavors of Bicol Express. This fusion offers a unique and exciting twist on two classic dishes, appealing to those who enjoy both traditional tastes and bold new culinary experiences.", ingredients: "Flour, pork, coconut milk, chili", tagline: "Your Chow? PaoPao!", distributor: { name: "PaoPao Express", logoUrl: "https://i.postimg.cc/cJnd3Cbt/521406357-644158121365526-6400504720170441162-n.jpg", teamImage: "https://i.postimg.cc/9Fyr485t/533969194-1334548551566706-1235716761115508470-n.jpg" } },
+            { id: 21, name: "EcoLeon Dishwashing Tablets", price: 0, image: "https://i.postimg.cc/3JpQYz57/solo2.jpg", description: "Ecoleon Dishwashing Tablets are pre-measured, eco-friendly tablets made from natural, biodegradable ingredients that clean dishes effectively without harmful chemicals. Convenient and safe for families and the environment, they promote greener living through both their gentle formula and sustainable packaging.", ingredients: "Natural, biodegradable ingredients", tagline: "Dissolve & Wash", distributor: { name: "EcoLeon", logoUrl: "https://i.postimg.cc/Pxqqg2R1/logo-nontransparent.jpg", teamImage: "https://i.postimg.cc/cCFZYnhW/group-pic.jpg" } },
+            { id: 22, name: "Wellbelly Bites (Pack of 1)", price: 15, image: "https://i.postimg.cc/tC7t6HCQ/product-pic1.jpg", description: "WellBelly Bites are soft, lemon-flavored gummies made with real bitter melon (ampalaya) extract, lightly sweetened to mask its bitterness. Packed with vitamins A and C, antioxidants, and natural ingredients, they support blood sugar control, digestion, and immunity without artificial additives.", ingredients: "Ampalaya extract, lemon flavor, vitamins A & C", tagline: "Make your health journey better, one bite at a time!", distributor: { name: "Wellbelly Bites", logoUrl: "https://i.postimg.cc/sxmShwb2/Wellbelly-bites-20250817-230602-0000.png", teamImage: "https://i.postimg.cc/xdQ0wncW/Memberpic.jpg" } },
+            { id: 23, name: "Wellbelly Bites (Pack of 2)", price: 30, image: "https://i.postimg.cc/tC7t6HCQ/product-pic1.jpg", description: "WellBelly Bites are soft, lemon-flavored gummies made with real bitter melon (ampalaya) extract, lightly sweetened to mask its bitterness. Packed with vitamins A and C, antioxidants, and natural ingredients, they support blood sugar control, digestion, and immunity without artificial additives.", ingredients: "Ampalaya extract, lemon flavor, vitamins A & C", tagline: "Make your health journey better, one bite at a time!", distributor: { name: "Wellbelly Bites", logoUrl: "https://i.postimg.cc/sxmShwb2/Wellbelly-bites-20250817-230602-0000.png", teamImage: "https://i.postimg.cc/xdQ0wncW/Memberpic.jpg" } },
+            { id: 24, name: "Tomato-Mozzarella (Small)", price: 35, image: "https://i.postimg.cc/T2SMgfqn/tomato-mozzarella-2.jpg", description: "Classic pizza-like taste with out tomato mozzarella that are made of freshly squeezed tomato, topped with the classic mozzarella cheese that master up the pizza goodness in bite size.", ingredients: "Tomato, mozzarella cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 25, name: "Tomato-Mozzarella (Large)", price: 45, image: "https://i.postimg.cc/T2SMgfqn/tomato-mozzarella-2.jpg", description: "Classic pizza-like taste with out tomato mozzarella that are made of freshly squeezed tomato, topped with the classic mozzarella cheese that master up the pizza goodness in bite size.", ingredients: "Tomato, mozzarella cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 26, name: "Garlic Cream Cheese (Small)", price: 43, image: "https://i.postimg.cc/hGKHcjcR/garlic-cream-cheese-3.jpg", description: "An infamous taste of garlic-y bite in every sweet, soft and fluffy texture of cream cheese which never fails to satisfy the Filipinos never-ending love for that garlic.", ingredients: "Garlic, cream cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 27, name: "Garlic Cream Cheese (Large)", price: 53, image: "https://i.postimg.cc/hGKHcjcR/garlic-cream-cheese-3.jpg", description: "An infamous taste of garlic-y bite in every sweet, soft and fluffy texture of cream cheese which never fails to satisfy the Filipinos never-ending love for that garlic.", ingredients: "Garlic, cream cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 28, name: "Street Style Cheesy Sweet Corn (Small)", price: 38, image: "https://i.postimg.cc/GhFRC6GY/street-style-cheesy-sweet-corn-2.jpg", description: "Not a fan of the classics? We also have the STREETS’ cheesy goodness in every bite with our street style cheesy sweet corn, that not only emphasize the goodness of the corn itself but also the not only one, but two layers of cheese!", ingredients: "Sweet corn, cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 29, name: "Street Style Cheesy Sweet Corn (Large)", price: 48, image: "https://i.postimg.cc/GhFRC6GY/street-style-cheesy-sweet-corn-2.jpg", description: "Not a fan of the classics? We also have the STREETS’ cheesy goodness in every bite with our street style cheesy sweet corn, that not only emphasize the goodness of the corn itself but also the not only one, but two layers of cheese!", ingredients: "Sweet corn, cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 30, name: "Creamy Spinach (Small)", price: 39, image: "https://i.postimg.cc/5tGTvm8b/creamy-spinach-3.jpg", description: "Let’s not forget the Premium Taste that makes you feel like a VIP! Compact with green leafy water spinach added with the creamy mix of cream cheese and cream, topped it off with a savory magical taste of cheese makes your heart go wild.", ingredients: "Spinach, cream cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 31, name: "Creamy Spinach (Large)", price: 49, image: "https://i.postimg.cc/5tGTvm8b/creamy-spinach-3.jpg", description: "Let’s not forget the Premium Taste that makes you feel like a VIP! Compact with green leafy water spinach added with the creamy mix of cream cheese and cream, topped it off with a savory magical taste of cheese makes your heart go wild.", ingredients: "Spinach, cream cheese", tagline: "Sa unang kagat, Boom Tarart Tarart", distributor: { name: "Tartlette", logoUrl: "https://i.postimg.cc/25nvjkrr/Tartlette-Logo.jpg", teamImage: "" } },
+            { id: 32, name: "Chug-a-Cookie (Americano)", price: 0, image: "https://i.postimg.cc/j2jfbykn/4c1220ae95e2f6cdb7cd0efba59a7698.jpg", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Americano coffee", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 33, name: "Chug-a-Cookie (Latte)", price: 0, image: "https://i.postimg.cc/j2jfbykn/4c1220ae95e2f6cdb7cd0efba59a7698.jpg", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Latte coffee", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 34, name: "Chug-a-Cookie (Cappuccino)", price: 0, image: "https://i.postimg.cc/j2jfbykn/4c1220ae95e2f6cdb7cd0efba59a7698.jpg", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Cappuccino coffee", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 35, name: "Chug-a-Cookie (Black Coffee)", price: 0, image: "", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Black coffee", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 36, name: "Chug-a-Cookie (Hot Chocolate)", price: 0, image: "https://i.postimg.cc/SRmBNxWM/27702353459c74dde979f1f826cd1a91.jpg", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Hot chocolate", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 37, name: "Chug-a-Cookie (Hot Milk with Matcha)", price: 0, image: "https://i.postimg.cc/SRmBNxWM/27702353459c74dde979f1f826cd1a91.jpg", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Hot milk, Matcha", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 38, name: "Chug-a-Cookie (Chocolate Milk)", price: 0, image: "https://i.postimg.cc/cJY2Rnh3/a1527c00a396e06445facb2adc41c9f4.jpg", description: "Chug-a-Cookie is an innovative edible coffee cup made from delicious cookie dough, offering a variety of flavors in the cookie itself, the drink, and the inner shell coating.", ingredients: "Cookie dough, Chocolate milk", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/wBCHHzfX/IMG-7084.avif" } },
+            { id: 39, name: "Zesty Pomelo Breeze", price: 0, image: "", description: "Magnolentarres’ Zesty Pomelo Breeze is a handcrafted wax sachet made with natural wax, pure pomelo essential oil, and dried botanicals that refreshes the air and repels mosquitoes. Unlike candles, it needs no heating—just place it in a pouch to enjoy its safe, long-lasting citrus aroma.", ingredients: "Natural wax, pomelo essential oil, dried botanicals", tagline: "A scent that takes all to heaven", distributor: { name: "Magnolentarres", logoUrl: "https://i.postimg.cc/2SbNMQKJ/Chosen-Logo.jpg", teamImage: "https://i.postimg.cc/nV5KJPpH/530834174-782532684303528-1925774131461403524-n.jpg" } },
+            { id: 40, name: "OniCrunch", price: 45, image: "https://i.postimg.cc/LXyW2KV9/IMG-5023.avif", description: "By merging Filipino and Japanese flavors, OniCrunch is a delicious snack fusion. With layers of seasoned egg and meatloaf, each piece of OniCrunch begins with freshly cooked rice. Our proprietary sauce is then drizzled on top. The piece is lightly coated with flour and breadcrumbs, then deep-fried to a crispy texture on the outside, with the insides remaining soft, flavorful, and packed with goodness.", ingredients: "Rice, egg, meatloaf, breadcrumbs", tagline: "Crave It. Taste It. Love It.", distributor: { name: "OniCrunch", logoUrl: "https://i.postimg.cc/pVzhbjgm/PRODUCT-LOGO.jpg", teamImage: "https://i.postimg.cc/3JzPkhQW/GROUP-PICTURE.avif" } }
         ];
+
         const uniqueBusinesses = Object.values(products.reduce((acc, product) => {
             const bizName = product.distributor.name;
             if (!acc[bizName]) {
@@ -334,82 +344,9 @@
             return acc;
         }, {}));
 
-        // --- Cart Persistence ---
         let cart = [];
-
-        function saveCartToLocalStorage() {
-            try {
-                localStorage.setItem('stemExpressCart', JSON.stringify(cart));
-            } catch (e) {
-                console.error("Failed to save cart to localStorage", e);
-            }
-        }
-
-        function loadCartFromLocalStorage() {
-            try {
-                const savedCart = localStorage.getItem('stemExpressCart');
-                if (savedCart) {
-                    cart = JSON.parse(savedCart);
-                    // Basic validation to ensure items have required properties
-                    cart = cart.filter(item => item && item.id && item.name && item.price !== undefined && item.quantity > 0);
-                }
-            } catch (e) {
-                console.error("Failed to load cart from localStorage", e);
-                cart = []; // Reset to empty on error
-            }
-        }
-
         const DELIVERY_FEE = 30;
 
-        // --- Helper Functions for Loading States ---
-        function disableButton(buttonElement, loadingText = "Processing...") {
-            if (buttonElement) {
-                buttonElement.disabled = true;
-                buttonElement.dataset.originalText = buttonElement.innerHTML;
-                buttonElement.innerHTML = loadingText;
-            }
-        }
-
-        function enableButton(buttonElement) {
-            if (buttonElement && buttonElement.disabled) {
-                buttonElement.disabled = false;
-                if (buttonElement.dataset.originalText) {
-                    buttonElement.innerHTML = buttonElement.dataset.originalText;
-                    delete buttonElement.dataset.originalText;
-                } else {
-                    // Fallback if original text wasn't saved
-                    buttonElement.innerHTML = buttonElement.textContent || buttonElement.innerText || "Submit";
-                }
-            }
-        }
-
-        // --- Product Variant Grouping Logic ---
-        function groupProductVariants(productsArray) {
-            const grouped = {};
-            productsArray.forEach(product => {
-                // Use product name up to the first '(' as the base name for grouping
-                // e.g., "Spicy Mango Popsicle (Toasted Coconut)" -> "Spicy Mango Popsicle"
-                // You might need to adjust this logic based on your naming convention.
-                const baseNameMatch = product.name.match(/^(.*?)\s*\(/);
-                const baseName = baseNameMatch ? baseNameMatch[1].trim() : product.name;
-
-                if (!grouped[baseName]) {
-                    grouped[baseName] = {
-                        baseName: baseName,
-                        variants: [],
-                        // Use details from the first encountered variant for the group card
-                        image: product.image,
-                        description: product.description,
-                        distributor: product.distributor,
-                        tagline: product.tagline // Assuming tagline is consistent per group
-                    };
-                }
-                grouped[baseName].variants.push(product);
-            });
-            return Object.values(grouped);
-        }
-
-        // --- CORE APP LOGIC ---
         window.onload = () => {
             const preloader = document.getElementById('preloader');
             const mainContent = document.getElementById('main-content');
@@ -417,22 +354,19 @@
                 preloader.classList.add('hidden');
                 mainContent.classList.add('visible');
                 document.body.classList.remove('loading');
-                // After the fade out animation, truly hide it
                 setTimeout(() => {
                     preloader.style.display = 'none';
                 }, 750);
-            }, 2500); // 2.5 second splash screen
+            }, 2500);
         };
+
         document.addEventListener('DOMContentLoaded', () => {
-            loadCartFromLocalStorage(); // Load cart on startup
             renderAllModals();
             setupEventListeners();
-            // Render content for both dashboards on load
             renderBusinesses(uniqueBusinesses, document.getElementById('business-grid'));
-            // Render grouped products for the main "All Products" grid
             const groupedProducts = groupProductVariants(products);
             renderProducts(groupedProducts, document.getElementById('all-products-grid'));
-            updateCart(); // Update UI based on loaded cart
+            updateCart();
         });
 
         function renderBusinesses(businessesToRender, container) {
@@ -451,45 +385,38 @@
 
         function renderProducts(productsToRender, container) {
             if (!container) return;
-
-            // Check if we are rendering the main "All Products" grid
             const isMainProductGrid = container.id === 'all-products-grid';
 
             if (isMainProductGrid) {
-                // --- GROUPED PRODUCTS VIEW ---
-                // productsToRender is expected to be the grouped data from groupProductVariants
                 container.innerHTML = productsToRender.map(gp => `
                     <div class="product-card grouped-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-base-name="${gp.baseName}">
                         <div class="flex items-center mb-2">
-                            <img src="${gp.distributor.logoUrl}" alt="Logo for ${gp.distributor.name}" class="w-8 h-8 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <img src="${gp.distributor.logoUrl}" alt="${gp.distributor.name}" class="w-8 h-8 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
                             <span class="text-sm text-gray-400 truncate">${gp.distributor.name}</span>
                         </div>
                         <div class="relative mb-4 pointer-events-none">
-                            <img src="${gp.image}" alt="Image for ${gp.baseName}" class="product-image rounded-lg w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <img src="${gp.image}" alt="${gp.baseName}" class="product-image rounded-lg w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
                             <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
-                            <!-- Indicate multiple variants -->
-                            <div class="absolute top-2 right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full">Variants: ${gp.variants.length}</div>
+                            ${gp.variants.length > 1 ? `<div class="absolute top-2 right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full">Variants: ${gp.variants.length}</div>` : ''}
                         </div>
                         <div class="pointer-events-none">
                             <h3 class="text-lg font-bold text-white mb-2 truncate">${gp.baseName}</h3>
                             <p class="text-gray-400 text-sm flex-grow mb-4 line-clamp-2">${gp.description}</p>
                         </div>
-                         <div class="mt-auto text-center">
+                       <div class="mt-auto text-center">
                             <span class="inline-block text-cyan-400 text-sm font-semibold group-hover:text-cyan-300 transition-colors duration-300">View Options</span>
                         </div>
                     </div>
                 `).join('');
             } else {
-                // --- INDIVIDUAL PRODUCTS VIEW ---
-                // For other grids (e.g., single shop view), render individual products
                 container.innerHTML = productsToRender.map(p => `
                     <div class="product-card individual-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-id="${p.id}">
                         <div class="flex items-center mb-2">
-                            <img src="${p.distributor.logoUrl}" alt="Logo for ${p.distributor.name}" class="w-8 h-8 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <img src="${p.distributor.logoUrl}" alt="${p.distributor.name}" class="w-8 h-8 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
                             <span class="text-sm text-gray-400 truncate">${p.distributor.name}</span>
                         </div>
                         <div class="relative mb-4 pointer-events-none">
-                            <img src="${p.image}" alt="Image of ${p.name}" class="product-image rounded-lg w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <img src="${p.image}" alt="${p.name}" class="product-image rounded-lg w-full h-48 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
                             <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
                             <div class="absolute top-2 -left-2 price-tag text-white text-lg font-bold px-4 py-1 shadow-lg">₱${p.price.toFixed(2)}</div>
                         </div>
@@ -504,79 +431,77 @@
                 `).join('');
             }
         }
-
-        // --- PAGE NAVIGATION & VIEW TOGGLING ---
+        
         function showProductsForBusiness(businessName) {
             const productsOfBusiness = products.filter(p => p.distributor.name === businessName);
             document.getElementById('products-heading').innerHTML = `Products by <span class="gradient-text">${businessName}</span>`;
             renderProducts(productsOfBusiness, document.getElementById('single-shop-product-grid'));
-            // Hide main dashboard views
             document.getElementById('businesses').classList.add('hidden');
             document.getElementById('all-products').classList.add('hidden');
-            // Show the single-shop view
             document.getElementById('products-by-shop').classList.remove('hidden');
             document.getElementById('products-by-shop').scrollIntoView({ behavior: 'smooth' });
         }
+
         function showAllBusinesses() {
-            // Hide other views
             document.getElementById('products-by-shop').classList.add('hidden');
             document.getElementById('all-products').classList.add('hidden');
-            // Show the main businesses view
             document.getElementById('businesses').classList.remove('hidden');
             document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
-            // Update toggle buttons to reflect the current view
             document.getElementById('view-shops-btn').classList.add('active');
             document.getElementById('view-all-products-btn').classList.remove('active');
         }
 
-        // --- ALL OTHER FUNCTIONS ---
-        // (Cart, Modals, Event Listeners, Firebase, etc.)
-
-        // --- New function to show the variants modal ---
         function viewProductVariants(baseName, groupedProducts) {
             const group = groupedProducts.find(gp => gp.baseName === baseName);
             if (!group) return;
+            
+            if (group.variants.length === 1) {
+                viewProduct(group.variants[0].id);
+                return;
+            }
 
             const modalId = 'product-variants-modal';
             let modal = document.getElementById(modalId);
 
             if (!modal) {
-                // Create the modal container if it doesn't exist
                 const modalContainer = document.createElement('div');
                 modalContainer.id = modalId;
+                document.getElementById('modals-container').appendChild(modalContainer);
                 modalContainer.className = 'fixed inset-0 z-50 hidden items-center justify-center p-4';
                 modalContainer.innerHTML = `
-                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('${modalId}')"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModalById('${modalId}')"></div>
                     <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-4xl max-h-[90vh] flex flex-col">
                         <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
                             <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-2xl leading-6 font-bold gradient-text">${group.baseName}</h3>
-                                <button onclick="closeModal('${modalId}')" class="text-gray-400 hover:text-white" aria-label="Close variants"><i class="fas fa-times"></i></button>
+                                <h3 id="variants-modal-title" class="text-2xl leading-6 font-bold gradient-text"></h3>
+                                <button onclick="closeModalById('${modalId}')" class="text-gray-400 hover:text-white" aria-label="Close variants"><i class="fas fa-times"></i></button>
                             </div>
                             <div class="mb-6 p-4 bg-black bg-opacity-20 rounded-lg">
-                                <p class="text-gray-300">${group.description}</p>
-                                <p class="text-gray-400 italic mt-2">"${group.tagline}"</p>
-                                 <div class="mt-4 flex items-center">
-                                     <img src="${group.distributor.logoUrl}" alt="Logo for ${group.distributor.name}" class="w-10 h-10 rounded-full mr-3" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/40x40/FFFFFF/000000?text=D';">
-                                    <span class="text-sm text-gray-300">Sold by ${group.distributor.name}</span>
+                                <p id="variants-modal-description" class="text-gray-300"></p>
+                                <p id="variants-modal-tagline" class="text-gray-400 italic mt-2"></p>
+                                <div class="mt-4 flex items-center">
+                                    <img id="variants-modal-distributor-logo" src="" alt="" class="w-10 h-10 rounded-full mr-3" loading="lazy">
+                                    <span id="variants-modal-distributor-name" class="text-sm text-gray-300"></span>
                                 </div>
                             </div>
                             <h4 class="text-xl font-bold text-white mb-4">Choose a Variant:</h4>
-                            <div id="variants-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Variants will be populated here -->
-                            </div>
+                            <div id="variants-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                         </div>
-                    </div>
-                `;
-                document.body.appendChild(modalContainer);
+                    </div>`;
                 modal = modalContainer;
             }
 
-            // Populate the variants list
+            modal.querySelector('#variants-modal-title').textContent = group.baseName;
+            modal.querySelector('#variants-modal-description').textContent = group.description;
+            modal.querySelector('#variants-modal-tagline').textContent = `"${group.tagline}"`;
+            modal.querySelector('#variants-modal-distributor-logo').src = group.distributor.logoUrl;
+            modal.querySelector('#variants-modal-distributor-logo').alt = `${group.distributor.name} Logo`;
+            modal.querySelector('#variants-modal-distributor-name').textContent = `Sold by ${group.distributor.name}`;
+            
             const variantsContainer = modal.querySelector('#variants-list-container');
             variantsContainer.innerHTML = group.variants.map(variant => `
                 <div class="glass-card rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 hover:bg-gray-800/50 transition-colors">
-                    <img src="${variant.image}" alt="Image of ${variant.name}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1a1a1a/FFFFFF?text=Img';">
+                    <img src="${variant.image}" alt="${variant.name}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1a1a1a/FFFFFF?text=Img';">
                     <div class="flex-grow">
                         <h5 class="font-bold text-white">${variant.name}</h5>
                         <p class="text-gray-400 text-sm mt-1">${variant.ingredients}</p>
@@ -590,54 +515,82 @@
                 </div>
             `).join('');
 
-            // Open the modal
             openModal(modalId);
         }
 
+        function closeModalById(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (!document.querySelector('.fixed.inset-0.z-50.flex')) {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            }
+        }
+        window.closeModalById = closeModalById;
+
+        function groupProductVariants(productsArray) {
+            const grouped = {};
+            productsArray.forEach(product => {
+                const baseNameMatch = product.name.match(/^(.*?)\s*\(/);
+                const baseName = baseNameMatch ? baseNameMatch[1].trim() : product.name;
+
+                if (!grouped[baseName]) {
+                    grouped[baseName] = {
+                        baseName: baseName,
+                        variants: [],
+                        image: product.image,
+                        description: product.description,
+                        distributor: product.distributor,
+                        tagline: product.tagline
+                    };
+                }
+                grouped[baseName].variants.push(product);
+            });
+            return Object.values(grouped);
+        }
+
         function setupEventListeners() {
-            // View Toggle Logic
             const shopsBtn = document.getElementById('view-shops-btn');
             const allProductsBtn = document.getElementById('view-all-products-btn');
             const businessesSection = document.getElementById('businesses');
             const allProductsSection = document.getElementById('all-products');
+
             shopsBtn.addEventListener('click', () => {
                 businessesSection.classList.remove('hidden');
                 allProductsSection.classList.add('hidden');
                 shopsBtn.classList.add('active');
                 allProductsBtn.classList.remove('active');
             });
+
             allProductsBtn.addEventListener('click', () => {
                 businessesSection.classList.add('hidden');
                 allProductsSection.classList.remove('hidden');
                 shopsBtn.classList.remove('active');
                 allProductsBtn.classList.add('active');
             });
-            // General click listener
+
             document.addEventListener('click', e => {
                 const addToCartButton = e.target.closest('.add-to-cart');
                 if (addToCartButton) {
                     addToCart(addToCartButton.dataset.id, 1, e);
                 }
 
-                // --- Updated Product Card Click Logic ---
                 const productCard = e.target.closest('.product-card');
-                if (productCard && !addToCartButton) { // Make sure we didn't click the Add to Cart button itself
+                if (productCard && !addToCartButton) {
                     if (productCard.classList.contains('grouped-product-card')) {
-                         // If it's a grouped product card, show variants
                         const baseName = productCard.dataset.baseName;
-                        const groupedProducts = groupProductVariants(products); // Regroup on click to be safe
+                        const groupedProducts = groupProductVariants(products);
                         viewProductVariants(baseName, groupedProducts);
                     } else if (productCard.classList.contains('individual-product-card')) {
-                        // If it's an individual product card (e.g., in single shop view), show details
                         viewProduct(productCard.dataset.id);
                     }
                 }
-                // --- End Updated Product Card Click Logic ---
-
+                
                 const businessCard = e.target.closest('.business-card');
                 if (businessCard) {
-                    const businessName = businessCard.dataset.businessName;
-                    showProductsForBusiness(businessName);
+                    showProductsForBusiness(businessCard.dataset.businessName);
                 }
                 if (e.target.closest('#back-to-businesses')) {
                     showAllBusinesses();
@@ -654,23 +607,16 @@
                     if(item) updateCartItemQuantity(item.id, item.quantity - 1);
                 }
                 if (e.target.closest('#close-modal')) closeModal('product-modal');
-
-                // --- Updated Modal Quantity Input Logic ---
                 if (e.target.closest('#increase-quantity-modal')) {
                     let qtyInput = document.getElementById('product-quantity-input');
-                    let currentVal = parseInt(qtyInput.value) || 1;
-                    qtyInput.value = currentVal + 1;
+                    qtyInput.value = parseInt(qtyInput.value) + 1;
                 }
                 if (e.target.closest('#decrease-quantity-modal')) {
                     let qtyInput = document.getElementById('product-quantity-input');
-                    let currentVal = parseInt(qtyInput.value) || 1;
-                    qtyInput.value = Math.max(1, currentVal - 1);
+                    qtyInput.value = Math.max(1, parseInt(qtyInput.value) - 1);
                 }
-                // --- End Updated Modal Quantity Input Logic ---
-
                 if (e.target.id === 'add-to-cart-modal') {
-                    const quantityInput = document.getElementById('product-quantity-input');
-                    const quantity = parseInt(quantityInput.value) || 1; // Default to 1 if invalid
+                    const quantity = parseInt(document.getElementById('product-quantity-input').value);
                     addToCart(e.target.dataset.id, quantity, e);
                     closeModal('product-modal');
                 }
@@ -682,31 +628,24 @@
                     document.getElementById('mobile-menu').classList.toggle('hidden');
                 }
             });
-            // Search Listeners
+            
             document.getElementById('shop-search').addEventListener('input', e => {
                 const searchTerm = e.target.value.toLowerCase();
                 const filtered = uniqueBusinesses.filter(b => b.name.toLowerCase().includes(searchTerm) || b.tagline.toLowerCase().includes(searchTerm));
                 renderBusinesses(filtered, document.getElementById('business-grid'));
             });
-            // --- Updated Product Search Listener ---
+
             document.getElementById('product-search').addEventListener('input', e => {
                 const searchTerm = e.target.value.toLowerCase();
-                // Filter individual products based on search term
                 const filteredProducts = products.filter(p =>
                     p.name.toLowerCase().includes(searchTerm) ||
                     p.description.toLowerCase().includes(searchTerm) ||
-                    p.distributor.name.toLowerCase().includes(searchTerm) ||
-                    (p.ingredients && p.ingredients.toLowerCase().includes(searchTerm)) // Optional: search ingredients
+                    p.distributor.name.toLowerCase().includes(searchTerm)
                 );
-
-                // Regroup the filtered products
                 const filteredGroupedProducts = groupProductVariants(filteredProducts);
-
-                // Render the grouped results to the main "All Products" grid
                 renderProducts(filteredGroupedProducts, document.getElementById('all-products-grid'));
             });
-            // --- End Updated Product Search Listener ---
-            // Other listeners
+
             document.addEventListener('change', e => {
                 if(e.target.classList.contains('quantity-input')) {
                     updateCartItemQuantity(e.target.dataset.id, parseInt(e.target.value));
@@ -718,6 +657,7 @@
             });
             document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
         }
+        
         function addToCart(productId, quantity = 1, event) {
             const product = products.find(p => p.id == productId);
             if (!product) return;
@@ -727,21 +667,23 @@
             } else {
                 cart.push({ ...product, quantity });
             }
-            updateCart(); // This will now save to localStorage
-            // ... (flying image animation remains the same) ...
-            const card = event.target.closest('.product-card, .glass-card'); // Adjust selector for variants modal
-            const productImage = card.querySelector('.product-image') || card.querySelector('img'); // Adjust selector
-            if (!productImage) return; // Safety check
+            updateCart();
+            
+            const card = event.target.closest('.product-card, .glass-card');
+            const productImage = card.querySelector('.product-image') || card.querySelector('img');
+            if (!productImage) return;
             const flyingImage = productImage.cloneNode();
             const rect = productImage.getBoundingClientRect();
             const cartIcon = document.getElementById('cart-button');
             const cartRect = cartIcon.getBoundingClientRect();
+
             flyingImage.classList.add('fly-to-cart');
             flyingImage.style.left = `${rect.left}px`;
             flyingImage.style.top = `${rect.top}px`;
             flyingImage.style.width = `${rect.width}px`;
             flyingImage.style.height = `${rect.height}px`;
             document.body.appendChild(flyingImage);
+            
             requestAnimationFrame(() => {
                 flyingImage.style.left = `${cartRect.left + cartRect.width / 2}px`;
                 flyingImage.style.top = `${cartRect.top + cartRect.height / 2}px`;
@@ -749,6 +691,7 @@
                 flyingImage.style.height = '20px';
                 flyingImage.style.opacity = '0';
             });
+            
             setTimeout(() => {
                 flyingImage.remove();
                 const cartIconElement = cartIcon.querySelector('i');
@@ -756,22 +699,26 @@
                 setTimeout(() => cartIconElement.classList.remove('cart-bounce'), 600);
             }, 1000);
         }
+
         function updateCartItemQuantity(productId, quantity) {
             const item = cart.find(item => item.id == productId);
             if (item) {
                 item.quantity = Math.max(1, quantity);
-                updateCart(); // This will now save to localStorage
+                updateCart();
             }
         }
+
         function removeFromCart(productId) {
             cart = cart.filter(item => item.id != productId);
-            updateCart(); // This will now save to localStorage
+            updateCart();
         }
+
         function updateCart() {
             const cartItemsContainer = document.getElementById('cart-items');
             const cartSummary = document.getElementById('cart-summary');
             const emptyCartMessage = document.getElementById('empty-cart-message');
             if (!cartItemsContainer || !cartSummary || !emptyCartMessage) return;
+            
             if (cart.length === 0) {
                 cartItemsContainer.innerHTML = '';
                 emptyCartMessage.classList.remove('hidden');
@@ -781,23 +728,23 @@
                 cartSummary.classList.remove('hidden');
                 cartItemsContainer.innerHTML = cart.map(item => `
                     <div class="bg-gray-800 rounded-lg p-3 flex items-start">
-                        <img src="${item.image}" alt="Image of ${item.name} in cart" class="w-16 h-16 object-cover rounded-md" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/64x64/0f172a/f8fafc?text=Img';">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/64x64/0f172a/f8fafc?text=Img';">
                         <div class="ml-4 flex-grow">
                             <h4 class="text-sm font-medium text-white">${item.name}</h4>
                             <p class="text-cyan-400 text-sm font-bold">₱${item.price.toFixed(2)}</p>
                             <div class="mt-2 flex items-center">
-                                <button class="cart-quantity-btn decrease-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}" aria-label="Decrease quantity for ${item.name}"><i class="fas fa-minus text-xs"></i></button>
-                                <input type="number" min="1" value="${item.quantity}" class="quantity-input mx-2 w-12 bg-gray-700 border border-gray-600 rounded text-center text-white text-sm" data-id="${item.id}" aria-label="Quantity for ${item.name}">
-                                <button class="cart-quantity-btn increase-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}" aria-label="Increase quantity for ${item.name}"><i class="fas fa-plus text-xs"></i></button>
+                                <button class="cart-quantity-btn decrease-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}"><i class="fas fa-minus text-xs"></i></button>
+                                <input type="number" min="1" value="${item.quantity}" class="quantity-input mx-2 w-12 bg-gray-700 border border-gray-600 rounded text-center text-white text-sm" data-id="${item.id}">
+                                <button class="cart-quantity-btn increase-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}"><i class="fas fa-plus text-xs"></i></button>
                             </div>
                         </div>
-                        <button class="remove-item text-gray-400 hover:text-white ml-2" data-id="${item.id}" aria-label="Remove ${item.name} from cart"><i class="fas fa-times"></i></button>
+                        <button class="remove-item text-gray-400 hover:text-white ml-2" data-id="${item.id}"><i class="fas fa-times"></i></button>
                     </div>
                 `).join('');
             }
             updateCartTotals();
-            saveCartToLocalStorage(); // Save cart state
         }
+
         function updateCartTotals(deliveryFeeAmount = 0) {
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const total = subtotal + deliveryFeeAmount;
@@ -807,6 +754,7 @@
             const count = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById('cart-count').textContent = count;
         }
+
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -815,6 +763,7 @@
                 document.body.classList.add('overflow-hidden');
             }
         }
+
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -825,32 +774,24 @@
                 }
             }
         }
+
         function viewProduct(productId) {
             const product = products.find(p => p.id == productId);
             if (!product) return;
             document.getElementById('modal-product-name').textContent = product.name;
             document.getElementById('modal-product-image').src = product.image;
-            document.getElementById('modal-product-image').alt = `Image of ${product.name}`; // a11y
             document.getElementById('modal-product-price').textContent = `₱${product.price.toFixed(2)}`;
             document.getElementById('modal-product-description').textContent = product.description;
             document.getElementById('modal-product-ingredients').textContent = product.ingredients;
             document.getElementById('modal-product-tagline').textContent = product.tagline;
-            const nutritionContainer = document.getElementById('nutrition-container');
-            if (product.nutrition && product.nutrition.trim() !== "") {
-                document.getElementById('modal-product-nutrition').textContent = product.nutrition;
-                nutritionContainer.style.display = 'block';
-            } else {
-                nutritionContainer.style.display = 'none';
-            }
             document.getElementById('add-to-cart-modal').dataset.id = product.id;
-            document.getElementById('product-quantity-input').value = 1; // Set input value
+            document.getElementById('product-quantity-input').value = 1;
             document.getElementById('distributor-logo').src = product.distributor.logoUrl;
-            document.getElementById('distributor-logo').alt = `Logo for ${product.distributor.name}`; // a11y
             document.getElementById('distributor-name').textContent = `Sold by ${product.distributor.name}`;
             document.getElementById('team-image').src = product.distributor.teamImage;
-            document.getElementById('team-image').alt = `Team photo for ${product.distributor.name}`; // a11y
             openModal('product-modal');
         }
+
         function openCheckout() {
             if (cart.length === 0) {
                 alert('Your cart is empty!');
@@ -865,6 +806,7 @@
             updateCheckoutDeliveryFee();
             openModal('checkout-modal');
         }
+
         function updateCheckoutFormVisibility() {
             const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
             document.getElementById('student-form').style.display = isStudent ? 'block' : 'none';
@@ -874,6 +816,7 @@
                 document.getElementById('student-delivery-address-container').style.display = isSchoolDelivery ? 'none' : 'block';
             }
         }
+
         function updateCheckoutDeliveryFee() {
             const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
             let fee = 0;
@@ -884,77 +827,63 @@
             }
             updateCartTotals(fee);
         }
+
         async function handlePlaceOrder() {
             const orderButton = document.getElementById('place-order');
-            disableButton(orderButton, 'Placing Order...'); // Disable and show loading
-
+            orderButton.disabled = true;
+            orderButton.textContent = 'Placing Order...';
+            
             const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
             let customerInfo = {};
             let validationError = false;
+
             if (isStudent) {
-                customerInfo = {
-                    type: 'Student', name: document.getElementById('student-name').value, gradeSection: document.getElementById('grade-section').value,
-                    fbUrl: document.getElementById('student-fb').value, phone: document.getElementById('student-phone').value,
-                    deliveryOption: document.querySelector('input[name="student-delivery"]:checked').value,
-                    deliveryAddress: document.getElementById('student-delivery-address').value, notes: document.getElementById('notes').value,
-                };
+                customerInfo = { type: 'Student', name: document.getElementById('student-name').value, gradeSection: document.getElementById('grade-section').value, fbUrl: document.getElementById('student-fb').value, phone: document.getElementById('student-phone').value, deliveryOption: document.querySelector('input[name="student-delivery"]:checked').value, deliveryAddress: document.getElementById('student-delivery-address').value, notes: document.getElementById('notes').value };
                 if (!customerInfo.name || !customerInfo.gradeSection) validationError = true;
             } else {
-                customerInfo = {
-                    type: 'Non-Student', name: document.getElementById('non-student-name').value, fbUrl: document.getElementById('non-student-fb').value,
-                    address: document.getElementById('non-student-address').value, phone: document.getElementById('non-student-phone').value,
-                    deliveryOption: document.querySelector('input[name="non-student-delivery"]:checked').value, notes: document.getElementById('notes').value,
-                };
+                customerInfo = { type: 'Non-Student', name: document.getElementById('non-student-name').value, fbUrl: document.getElementById('non-student-fb').value, address: document.getElementById('non-student-address').value, phone: document.getElementById('non-student-phone').value, deliveryOption: document.querySelector('input[name="non-student-delivery"]:checked').value, notes: document.getElementById('notes').value };
                 if (!customerInfo.name || !customerInfo.address || !customerInfo.phone) validationError = true;
             }
+
             if (validationError) {
                 alert('Please fill in all required fields.');
-                enableButton(orderButton); // Re-enable on error
+                orderButton.disabled = false;
+                orderButton.textContent = 'Place Order';
                 return;
             }
+
             const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const deliveryFee = parseFloat(document.getElementById('checkout-delivery').textContent.replace('₱', ''));
             const total = subtotal + deliveryFee;
-            const orderData = {
-                customerInfo,
-                items: cart.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price
-                })),
-                subtotal,
-                deliveryFee,
-                total,
-                status: 'Pending',
-                createdAt: new Date().toISOString()
-            };
+
+            const orderData = { customerInfo, items: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity, price: item.price })), subtotal, deliveryFee, total, status: 'Pending', createdAt: new Date().toISOString() };
+
             try {
                 const newOrderRef = push(ref(db, 'orders'));
                 await set(newOrderRef, orderData);
                 closeModal('checkout-modal');
                 openModal('confirmation-modal');
                 cart = [];
-                updateCart(); // This will clear localStorage
+                updateCart();
             } catch (error) {
                 console.error("Error placing order: ", error);
                 alert("There was an error placing your order. Please try again.");
             } finally {
-                enableButton(orderButton); // Always re-enable when done
+                orderButton.disabled = false;
+                orderButton.textContent = 'Place Order';
             }
         }
+
         async function handleContactSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const feedbackEl = document.getElementById('contact-form-feedback');
             const button = form.querySelector('button[type="submit"]');
-            disableButton(button, 'Sending...'); // Disable and show loading
+            button.disabled = true;
+            button.textContent = 'Sending...';
 
             try {
-                const messageData = {
-                    name: form.name.value, email: form.email.value,
-                    message: form.message.value, submittedAt: new Date().toISOString()
-                };
+                const messageData = { name: form.name.value, email: form.email.value, message: form.message.value, submittedAt: new Date().toISOString() };
                 const newMessageRef = push(ref(db, 'messages'));
                 await set(newMessageRef, messageData);
                 feedbackEl.textContent = "Thank you! Your message has been sent.";
@@ -965,9 +894,11 @@
                 feedbackEl.textContent = "Sorry, there was an error. Please try again.";
                 feedbackEl.className = "text-red-400 text-center mt-4";
             } finally {
-                enableButton(button); // Always re-enable when done
+                button.disabled = false;
+                button.textContent = 'Send';
             }
         }
+
         function renderAllModals() {
             document.getElementById('modals-container').innerHTML = `
                 <div id="cart-sidebar" class="fixed inset-0 z-50 hidden">
@@ -981,8 +912,8 @@
                         <div id="empty-cart-message" class="text-center py-10 hidden"><i class="fas fa-shopping-cart text-4xl text-gray-600 mb-4"></i><p class="text-gray-400">Your cart is empty</p></div>
                         <div id="cart-summary" class="p-6 border-t border-gray-800 hidden">
                             <div class="space-y-2 mb-4">
-                                <div class="flex justify-between"><span class="text-gray-400">Subtotal</span><span id="cart-subtotal" class="text-gray-300"></span></div>
-                                <div class="flex justify-between"><span class="text-gray-400">Delivery Fee</span><span id="delivery-fee" class="text-gray-300"></span></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Subtotal</span><span id="cart-subtotal"></span></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Delivery Fee</span><span id="delivery-fee"></span></div>
                                 <div class="flex justify-between text-lg font-bold"><span class="text-gray-300">Total</span><span id="cart-total" class="gradient-text"></span></div>
                             </div>
                             <button id="checkout-button" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Proceed to Checkout</button>
@@ -990,12 +921,12 @@
                     </div>
                 </div>
                 <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('product-modal')" aria-hidden="true"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('product-modal')"></div>
                     <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-4xl w-full max-h-[90vh] flex flex-col">
                         <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 id="modal-product-name" class="text-2xl leading-6 font-bold gradient-text"></h3>
-                                <button id="close-modal" class="text-gray-400 hover:text-white" aria-label="Close product details"><i class="fas fa-times"></i></button>
+                                <button id="close-modal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -1003,15 +934,13 @@
                                     <div class="mt-4 flex items-center justify-between">
                                         <span id="modal-product-price" class="text-2xl font-bold text-white"></span>
                                         <div class="flex items-center space-x-2">
-                                            <!-- Updated Quantity Controls -->
-                                            <button id="decrease-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center" aria-label="Decrease quantity"><i class="fas fa-minus"></i></button>
-                                            <input type="number" id="product-quantity-input" min="1" value="1" class="bg-gray-700 border border-gray-600 rounded text-center text-white w-12" aria-label="Quantity">
-                                            <button id="increase-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center" aria-label="Increase quantity"><i class="fas fa-plus"></i></button>
-                                            <!-- End Updated Quantity Controls -->
+                                            <button id="decrease-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-minus"></i></button>
+                                            <input type="number" id="product-quantity-input" min="1" value="1" class="bg-gray-700 border border-gray-600 rounded text-center text-white w-12">
+                                            <button id="increase-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button>
                                         </div>
                                     </div>
                                     <div class="mt-4 p-3 bg-black bg-opacity-20 rounded-lg flex items-center">
-                                        <img id="distributor-logo" src="" class="w-10 h-10 rounded-full mr-3" alt="">
+                                        <img id="distributor-logo" src="" class="w-10 h-10 rounded-full mr-3">
                                         <span id="distributor-name" class="text-sm text-gray-300"></span>
                                     </div>
                                 </div>
@@ -1019,12 +948,12 @@
                                     <div><h4 class="text-lg font-semibold text-white">Description</h4><p id="modal-product-description" class="text-gray-300"></p></div>
                                     <div><h4 class="text-lg font-semibold text-white">Ingredients</h4><p id="modal-product-ingredients" class="text-gray-300 text-sm"></p></div>
                                     <div><h4 class="text-lg font-semibold text-white">Tagline</h4><p id="modal-product-tagline" class="text-gray-300 italic"></p></div>
-                                    <div id="nutrition-container"><h4 class="text-lg font-semibold text-white">Nutrition Info</h4><p id="modal-product-nutrition" class="text-gray-300"></p></div>
+                                    <div id="nutrition-container" class="hidden"><h4 class="text-lg font-semibold text-white">Nutrition Info</h4><p id="modal-product-nutrition" class="text-gray-300"></p></div>
                                 </div>
                             </div>
                             <div class="mt-8 border-t border-gray-700 pt-6">
                                 <h4 class="text-xl font-bold text-white mb-4 text-center">Meet the Creators</h4>
-                                <img id="team-image" src="" class="w-full h-auto rounded-lg" alt="">
+                                <img id="team-image" src="" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Photo';">
                             </div>
                         </div>
                         <div class="bg-black bg-opacity-20 px-4 py-3 sm:px-6 border-t border-gray-700">
@@ -1033,12 +962,12 @@
                     </div>
                 </div>
                 <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('checkout-modal')" aria-hidden="true"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModal('checkout-modal')"></div>
                     <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-2xl w-full max-h-[90vh] flex flex-col">
                         <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-2xl leading-6 font-bold gradient-text">Checkout</h3>
-                                <button id="close-checkout-modal" class="text-gray-400 hover:text-white" aria-label="Close checkout"><i class="fas fa-times"></i></button>
+                                <button id="close-checkout-modal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
                             </div>
                             <div class="space-y-6">
                                 <div>
@@ -1047,8 +976,8 @@
                                 </div>
                                 <div id="student-form">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label for="student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="student-name" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
-                                        <div><label for="grade-section" class="block text-sm font-medium text-gray-300 mb-1">Grade & Section *</label><input type="text" id="grade-section" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                        <div><label for="student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="student-name" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                        <div><label for="grade-section" class="block text-sm font-medium text-gray-300 mb-1">Grade & Section *</label><input type="text" id="grade-section" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
                                     </div>
                                     <div class="mt-4"><label for="student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
                                     <div class="mt-4"><label for="student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number</label><input type="tel" id="student-phone" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
@@ -1057,11 +986,11 @@
                                 </div>
                                 <div id="non-student-form" class="hidden">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label for="non-student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="non-student-name" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
-                                        <div><label for="non-student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number *</label><input type="tel" id="non-student-phone" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                        <div><label for="non-student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="non-student-name" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                        <div><label for="non-student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number *</label><input type="tel" id="non-student-phone" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
                                     </div>
                                     <div class="mt-4"><label for="non-student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="non-student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
-                                    <div class="mt-4"><label for="non-student-address" class="block text-sm font-medium text-gray-300 mb-1">Address *</label><input type="text" id="non-student-address" class="form-input w-full rounded-md py-2 px-3 text-white" required></div>
+                                    <div class="mt-4"><label for="non-student-address" class="block text-sm font-medium text-gray-300 mb-1">Address *</label><input type="text" id="non-student-address" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
                                     <div class="mt-4"><label class="block text-sm font-medium text-gray-300 mb-1">Delivery Option</label><div class="flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="pickup" class="form-radio"><span class="ml-2 text-gray-300">Self Pickup (Free)</span></label><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="delivery" class="form-radio" checked><span class="ml-2 text-gray-300">Delivery</span></label></div></div>
                                 </div>
                                 <div class="mt-4"><label for="notes" class="block text-sm font-medium text-gray-300 mb-1">Special Requests/Notes</label><textarea id="notes" rows="2" class="form-input w-full rounded-md py-2 px-3 text-white"></textarea></div>
@@ -1069,8 +998,8 @@
                                     <h4 class="text-lg font-semibold text-white mb-2">Order Summary</h4>
                                     <div id="checkout-items" class="space-y-2 mb-4"></div>
                                     <div class="border-t border-gray-600 pt-2 space-y-1">
-                                        <div class="flex justify-between"><span class="text-gray-300">Subtotal:</span><span id="checkout-subtotal" class="text-gray-300"></span></div>
-                                        <div class="flex justify-between"><span class="text-gray-300">Delivery Fee:</span><span id="checkout-delivery" class="text-gray-300">To be determined</span></div>
+                                        <div class="flex justify-between"><span class="text-gray-300">Subtotal:</span><span id="checkout-subtotal"></span></div>
+                                        <div class="flex justify-between"><span class="text-gray-300">Delivery Fee:</span><span id="checkout-delivery"></span></div>
                                         <div class="flex justify-between font-bold mt-2"><span class="text-white">Total:</span><span id="checkout-total" class="gradient-text"></span></div>
                                     </div>
                                     <p class="text-xs text-gray-400 mt-2">Note: The final delivery fee will be confirmed via Facebook conversation based on your location.</p>
@@ -1083,7 +1012,7 @@
                     </div>
                 </div>
                 <div id="confirmation-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-gray-900 opacity-90" onclick="closeModal('confirmation-modal')" aria-hidden="true"></div>
+                    <div class="absolute inset-0 bg-gray-900 opacity-90" onclick="closeModal('confirmation-modal')"></div>
                     <div class="relative glass-card rounded-lg text-center overflow-hidden shadow-xl transform transition-all sm:max-w-lg w-full p-6">
                         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-cyan-100"><i class="fas fa-check text-cyan-600 text-xl"></i></div>
                         <div class="mt-3">
@@ -1095,41 +1024,34 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Product Variants Modal will be dynamically created here -->
-            `;
+                </div>`;
         }
+
     </script>
     <script>
         // --- Interactive 3D Background with Three.js (Slower, Parallax on Scroll) ---
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000); // Increased far plane for depth
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true, antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        // --- CAMERA SETUP ---
-        // Position the camera further back and higher to see more of the scene
-        camera.position.set(0, 0, 300); // X, Y, Z
-        let targetCameraY = camera.position.y; // Target Y position for smooth scrolling
+        camera.position.set(0, 0, 300);
+        let targetCameraY = camera.position.y;
 
-        // --- LIGHTING ---
-        const pointLight1 = new THREE.PointLight(0x8A2BE2, 2, 500); // Increased intensity and distance
+        const pointLight1 = new THREE.PointLight(0x8A2BE2, 2, 500);
         pointLight1.position.set(150, 150, 150);
         const pointLight2 = new THREE.PointLight(0x00BFFF, 2, 500);
         pointLight2.position.set(-150, -150, 150);
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); // Slightly increased ambient
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
         scene.add(pointLight1, pointLight2, ambientLight);
 
         const allShapes = [];
-        // --- MATERIALS ---
         const standardMaterial = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.9, roughness: 0.1 });
         const textMaterial = new THREE.MeshStandardMaterial({ color: 0x00BFFF, emissive: 0x004466, metalness: 0.7, roughness: 0.2 });
 
-        // --- LOADING FONT FOR EQUATIONS ---
         const loader = new THREE.FontLoader();
         loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-            // --- EQUATIONS ---
             const equations = [
                 'E=mc²', 'F=ma', 'a²+b²=c²', 'e^{iπ}+1=0', 'H₂O', 'C₆H₁₂O₆',
                 'Φ', '∇·E=ρ/ε₀', 'ĤΨ=EΨ', 'ΣF=0', 'π', '∫', '√', '∞',
@@ -1138,139 +1060,75 @@
 
             equations.forEach(eq => {
                 const textGeometry = new THREE.TextGeometry(eq, {
-                    font: font,
-                    size: 8, // Increased size
-                    height: 1,
-                    curveSegments: 8, // Reduced for performance
-                    bevelEnabled: true,
-                    bevelThickness: 0.3,
-                    bevelSize: 0.1,
-                    bevelSegments: 2
+                    font: font, size: 8, height: 1, curveSegments: 8,
+                    bevelEnabled: true, bevelThickness: 0.3, bevelSize: 0.1, bevelSegments: 2
                 });
                 textGeometry.center();
                 const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-
-                // --- INITIAL POSITIONING ---
-                // Place equations in a wide, deep area
-                const spreadX = 600;
-                const spreadY = 800; // Taller spread for scrolling effect
-                const spreadZ = 300;
+                const spreadX = 600, spreadY = 800, spreadZ = 300;
                 textMesh.position.set(
                     (Math.random() - 0.5) * spreadX,
                     (Math.random() - 0.5) * spreadY,
                     (Math.random() - 0.5) * spreadZ
                 );
-
-                // --- ROTATION ---
                 textMesh.rotation.set(
-                    Math.random() * Math.PI,
-                    Math.random() * Math.PI,
+                    Math.random() * Math.PI, Math.random() * Math.PI,
                     Math.random() * Math.PI * 0.5 - Math.PI * 0.25
                 );
-
-                // --- ANIMATION DATA ---
                 textMesh.userData = {
-                    rotationSpeed: {
-                        x: (Math.random() - 0.5) * 0.002, // Slower rotation
-                        y: (Math.random() - 0.5) * 0.002,
-                        z: (Math.random() - 0.5) * 0.001
-                    },
+                    rotationSpeed: { x: (Math.random() - 0.5) * 0.002, y: (Math.random() - 0.5) * 0.002, z: (Math.random() - 0.5) * 0.001 },
                     pulseOffset: Math.random() * Math.PI * 2
                 };
-
                 allShapes.push(textMesh);
                 scene.add(textMesh);
             });
-
-            // --- ASTRONAUT ---
+            
             function createSimpleAstronaut() {
                 const group = new THREE.Group();
                 const mat = standardMaterial;
                 const body = new THREE.Mesh(new THREE.CylinderGeometry(2, 1.5, 6, 16), mat);
-                body.position.y = 3;
-                group.add(body);
+                body.position.y = 3; group.add(body);
                 const head = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), mat);
-                head.position.y = 7;
-                group.add(head);
+                head.position.y = 7; group.add(head);
                 const helmet = new THREE.Mesh(new THREE.SphereGeometry(2.1, 16, 16), new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.6, metalness: 0.3, roughness: 0.1 }));
-                helmet.position.y = 7;
-                group.add(helmet);
+                helmet.position.y = 7; group.add(helmet);
                 const armGeom = new THREE.CylinderGeometry(0.5, 0.5, 5, 8);
                 const leftArm = new THREE.Mesh(armGeom, mat);
-                leftArm.position.set(-2.5, 3, 0);
-                leftArm.rotation.z = Math.PI / 2.5;
-                group.add(leftArm);
+                leftArm.position.set(-2.5, 3, 0); leftArm.rotation.z = Math.PI / 2.5; group.add(leftArm);
                 const rightArm = new THREE.Mesh(armGeom, mat);
-                rightArm.position.set(2.5, 3, 0);
-                rightArm.rotation.z = -Math.PI / 2.5;
-                group.add(rightArm);
+                rightArm.position.set(2.5, 3, 0); rightArm.rotation.z = -Math.PI / 2.5; group.add(rightArm);
                 const legGeom = new THREE.CylinderGeometry(0.6, 0.6, 5, 8);
                 const leftLeg = new THREE.Mesh(legGeom, mat);
-                leftLeg.position.set(-1, -2, 0);
-                group.add(leftLeg);
+                leftLeg.position.set(-1, -2, 0); group.add(leftLeg);
                 const rightLeg = new THREE.Mesh(legGeom, mat);
-                rightLeg.position.set(1, -2, 0);
-                group.add(rightLeg);
+                rightLeg.position.set(1, -2, 0); group.add(rightLeg);
                 return group;
             }
-
             const astronaut = createSimpleAstronaut();
-            // Place astronaut in the center, further back
             astronaut.position.set(0, 0, -100);
             astronaut.scale.set(1.5, 1.5, 1.5);
-            astronaut.userData = {
-                rotationSpeed: { x: 0.001, y: 0.002, z: 0.0005 }, // Slow rotation
-                pulseOffset: Math.random() * Math.PI * 2,
-                // Make astronaut move slightly with scroll, but less than background elements
-                parallaxFactor: 0.3
-            };
+            astronaut.userData = { rotationSpeed: { x: 0.001, y: 0.002, z: 0.0005 }, pulseOffset: Math.random() * Math.PI * 2, parallaxFactor: 0.3 };
             allShapes.push(astronaut);
             scene.add(astronaut);
         });
 
-        // --- EXISTING SHAPES ---
         function addShapeToScene(shape) {
-            // Place shapes in a very wide and deep area
-            const spreadX = 800;
-            const spreadY = 1000; // Taller spread
-            const spreadZ = 400;
-            shape.position.set(
-                (Math.random() - 0.5) * spreadX,
-                (Math.random() - 0.5) * spreadY,
-                (Math.random() - 0.5) * spreadZ
-            );
+            const spreadX = 800, spreadY = 1000, spreadZ = 400;
+            shape.position.set((Math.random() - 0.5) * spreadX, (Math.random() - 0.5) * spreadY, (Math.random() - 0.5) * spreadZ);
             shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
-
-            // --- ANIMATION DATA ---
-            shape.userData = {
-                rotationSpeed: { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.001 }, // Slower
-                pulseOffset: Math.random() * Math.PI * 2,
-                // Standard parallax factor for general shapes
-                parallaxFactor: 1.0
-            };
-
-            // --- ORBITING CHILDREN (Electrons, Planets) ---
+            shape.userData = { rotationSpeed: { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.001 }, pulseOffset: Math.random() * Math.PI * 2, parallaxFactor: 1.0 };
             shape.children.forEach(child => {
                 if (child instanceof THREE.Mesh && child.geometry.type === 'SphereGeometry') {
-                     // Assume spheres added after Torus are orbiting objects
                     const parentHasOrbits = shape.children.some(c => c instanceof THREE.Mesh && c.geometry.type === 'TorusGeometry');
                     if (parentHasOrbits) {
-                        child.userData = {
-                            orbitRadius: child.position.length(), // Calculate initial radius
-                            orbitSpeed: (Math.random() + 0.2) * 0.005, // Slower orbit
-                            orbitAngle: Math.random() * Math.PI * 2,
-                            // Orbiting objects move with their parent's parallax
-                            parallaxFactor: shape.userData.parallaxFactor
-                        };
+                        child.userData = { orbitRadius: child.position.length(), orbitSpeed: (Math.random() + 0.2) * 0.005, orbitAngle: Math.random() * Math.PI * 2, parallaxFactor: shape.userData.parallaxFactor };
                     }
                 }
             });
-
             allShapes.push(shape);
             scene.add(shape);
         }
 
-        // --- SHAPE GENERATORS ---
         function createLogoGear() {
             const group = new THREE.Group();
             const centralSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), standardMaterial);
@@ -1281,9 +1139,10 @@
                 petal.position.set(Math.cos(angle) * 1.5, Math.sin(angle) * 1.5, 0);
                 group.add(petal);
             }
-            group.scale.set(2.5, 2.5, 2.5); // Larger
+            group.scale.set(2.5, 2.5, 2.5);
             return group;
         }
+
         function createDnaHelix() {
             const group = new THREE.Group();
             const radius = 2.5, height = 15, turns = 2, pairs = 15;
@@ -1301,152 +1160,95 @@
             }
             return group;
         }
+
         function createAtom() {
             const group = new THREE.Group();
-            const nucleus = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), standardMaterial);
-            group.add(nucleus);
+            group.add(new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), standardMaterial));
             for (let i = 0; i < 3; i++) {
-                const orbitRadius = 6 + i * 2;
-                const orbit = new THREE.Mesh(new THREE.TorusGeometry(orbitRadius, 0.1, 8, 64), new THREE.MeshBasicMaterial({ color: 0x777777 }));
+                const orbit = new THREE.Mesh(new THREE.TorusGeometry(6 + i * 2, 0.1, 8, 64), new THREE.MeshBasicMaterial({ color: 0x777777 }));
                 orbit.rotation.x = Math.PI / 2;
                 orbit.rotation.z = Math.random() * Math.PI;
                 group.add(orbit);
-                const electron = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), standardMaterial);
-                // Electron position will be set by animation loop
-                group.add(electron);
+                group.add(new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), standardMaterial));
             }
             return group;
-        }
-        function createSolarSystem() {
-            const group = new THREE.Group();
-            const sunMat = new THREE.MeshStandardMaterial({ color: 0xffcc33, emissive: 0x442200, metalness: 0.5, roughness: 0.3 });
-            const sun = new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), sunMat);
-            group.add(sun);
-            for (let i = 0; i < 5; i++) {
-                const planetGeom = new THREE.SphereGeometry(0.8 + Math.random() * 0.8, 16, 16);
-                const planet = new THREE.Mesh(planetGeom, standardMaterial);
-                // Planet position will be set by animation loop
-                group.add(planet);
-            }
-            return group;
-        }
-        const shapeGenerators = [
-            createLogoGear, createDnaHelix, createAtom, createSolarSystem,
-            () => new THREE.Mesh(new THREE.TetrahedronGeometry(5, 0), standardMaterial),
-            () => new THREE.Mesh(new THREE.DodecahedronGeometry(5, 0), standardMaterial),
-            () => new THREE.Mesh(new THREE.OctahedronGeometry(5, 0), standardMaterial),
-            () => new THREE.Mesh(new THREE.IcosahedronGeometry(5, 0), standardMaterial),
-            () => new THREE.Mesh(new THREE.TorusKnotGeometry(3, 1, 100, 16), standardMaterial)
-        ];
-        // Create background shapes
-        for (let i = 0; i < 150; i++) { // Reduced number slightly for performance
-            const shape = shapeGenerators[i % shapeGenerators.length]();
-            addShapeToScene(shape);
         }
 
-        // --- STARS ---
+        function createSolarSystem() {
+            const group = new THREE.Group();
+            group.add(new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffcc33, emissive: 0x442200, metalness: 0.5, roughness: 0.3 })));
+            for (let i = 0; i < 5; i++) {
+                group.add(new THREE.Mesh(new THREE.SphereGeometry(0.8 + Math.random() * 0.8, 16, 16), standardMaterial));
+            }
+            return group;
+        }
+
+        const shapeGenerators = [createLogoGear, createDnaHelix, createAtom, createSolarSystem, () => new THREE.Mesh(new THREE.TetrahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.DodecahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.OctahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.IcosahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.TorusKnotGeometry(3, 1, 100, 16), standardMaterial)];
+        for (let i = 0; i < 150; i++) {
+            addShapeToScene(shapeGenerators[i % shapeGenerators.length]());
+        }
+
         const starVertices = [];
-        for (let i = 0; i < 20000; i++) { // More stars
-            const x = THREE.MathUtils.randFloatSpread(3000); // Wider spread
-            const y = THREE.MathUtils.randFloatSpread(3000);
-            const z = THREE.MathUtils.randFloatSpread(1000); // Shallower spread for stars
-            starVertices.push(x, y, z);
+        for (let i = 0; i < 20000; i++) {
+            starVertices.push(THREE.MathUtils.randFloatSpread(3000), THREE.MathUtils.randFloatSpread(3000), THREE.MathUtils.randFloatSpread(1000));
         }
         const starGeometry = new THREE.BufferGeometry();
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 1.5, sizeAttenuation: true }); // Larger stars
-        const stars = new THREE.Points(starGeometry, starMaterial);
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xaaaaaa, size: 1.5, sizeAttenuation: true }));
         scene.add(stars);
 
-        // --- MOUSE PARALLAX ---
         let mouseX = 0;
         function updateMousePosition(event) {
             const x = event.touches ? event.touches[0].clientX : event.clientX;
-            // Map mouse X from -1 to 1, but with a smaller range for subtlety
             mouseX = ((x / window.innerWidth) * 2 - 1) * 0.5;
         }
         document.addEventListener('mousemove', updateMousePosition);
         document.addEventListener('touchmove', updateMousePosition, { passive: true });
 
-        // --- SCROLL PARALLAX ---
-        let scrollY = 0;
         function updateScrollPosition() {
-            scrollY = window.scrollY;
-            // Update the target camera Y position based on scroll
-            // Invert scroll effect so content appears to move 'into' the background
-            targetCameraY = (scrollY * 0.3); // Adjust 0.3 for stronger/weaker effect
+            targetCameraY = (window.scrollY * 0.3);
         }
         window.addEventListener('scroll', updateScrollPosition);
 
-        // --- ANIMATION LOOP ---
         const clock = new THREE.Clock();
-
         function animate() {
-            const elapsedTime = clock.getElapsedTime();
             requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            camera.position.y += (targetCameraY - camera.position.y) * 0.05;
+            camera.position.x += (mouseX * 20 - camera.position.x) * 0.03;
 
-            // --- SMOOTH CAMERA SCROLLING ---
-            // Smoothly interpolate camera Y position towards the target
-            camera.position.y += (targetCameraY - camera.position.y) * 0.05; // Adjust 0.05 for smoother/faster catch-up
-
-            // --- MOUSE PARALLAX ---
-            // Move camera slightly left/right based on mouse
-            camera.position.x += (mouseX * 20 - camera.position.x) * 0.03; // Adjusted strength
-
-            // --- ROTATE CAMERA FOR SUBTLE EFFECT ---
-            //camera.rotation.y = mouseX * 0.05; // Very subtle rotation based on mouse
-
-            // --- UPDATE SHAPES ---
             allShapes.forEach(shape => {
-                // --- ROTATION ---
                 if (shape.userData.rotationSpeed) {
                     shape.rotation.x += shape.userData.rotationSpeed.x;
                     shape.rotation.y += shape.userData.rotationSpeed.y;
                     shape.rotation.z += shape.userData.rotationSpeed.z || 0;
                 }
-
-                // --- PULSING SCALE ---
                 if (shape.userData.pulseOffset !== undefined) {
-                    const pulse = Math.sin(elapsedTime * 1.5 + shape.userData.pulseOffset) * 0.03 + 0.97; // Slower, subtler pulse
+                    const pulse = Math.sin(elapsedTime * 1.5 + shape.userData.pulseOffset) * 0.03 + 0.97;
                     shape.scale.set(pulse, pulse, pulse);
                 }
-
-                // --- ORBITING ELECTRONS/PLANETS ---
                 shape.children.forEach(child => {
                     if (child.userData && child.userData.orbitRadius) {
                         child.userData.orbitAngle += child.userData.orbitSpeed;
                         const r = child.userData.orbitRadius;
-                        // Orbit in XZ plane
                         child.position.x = Math.cos(child.userData.orbitAngle) * r;
                         child.position.z = Math.sin(child.userData.orbitAngle) * r;
                     }
                 });
             });
 
-            // --- MOVE LIGHTS SUBTLY ---
-            pointLight1.position.x = Math.sin(elapsedTime * 0.2) * 200; // Slower light movement
-            pointLight1.position.y = Math.cos(elapsedTime * 0.25) * 150 + camera.position.y; // Follow camera Y slightly
-            pointLight1.position.z = Math.cos(elapsedTime * 0.15) * 150 + 100;
-
-            pointLight2.position.x = Math.cos(elapsedTime * 0.18) * -200;
+            pointLight1.position.y = Math.cos(elapsedTime * 0.25) * 150 + camera.position.y;
             pointLight2.position.y = Math.sin(elapsedTime * 0.22) * -150 + camera.position.y;
-            pointLight2.position.z = Math.sin(elapsedTime * 0.12) * -150 + 100;
-
             renderer.render(scene, camera);
         }
         animate();
 
-        // --- RESIZE HANDLER ---
-        function onWindowResize() {
+        window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        window.addEventListener('resize', onWindowResize);
-
-        // Initial scroll update
+        });
         updateScrollPosition();
     </script>
 </body>
 </html>
-
