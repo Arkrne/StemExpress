@@ -279,7 +279,7 @@
     <div id="modals-container"></div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+        import { getDatabase, ref, set, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyDgKCFUvQ___3HXsT9xLA3ZIbchywwpY6M",
@@ -837,33 +837,46 @@
                 return;
             }
 
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            const flatOrderData = {
-                customerType: customerInfo.type,
-                customerName: customerInfo.name,
-                customerGradeSection: customerInfo.gradeSection || 'N/A',
-                customerFbUrl: customerInfo.fbUrl || 'N/A',
-                customerPhone: customerInfo.phone || 'N/A',
-                customerAddress: customerInfo.address || 'N/A',
-                deliveryOption: customerInfo.deliveryOption,
-                deliveryAddress: customerInfo.deliveryAddress || 'N/A',
-                orderNotes: customerInfo.notes || 'N/A',
-                orderedItems: JSON.stringify(cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))),
-                subtotal: subtotal,
-                deliveryFee: "To be confirmed based on location.",
-                total: subtotal,
-                status: 'Pending',
-                createdAt: new Date().toISOString()
-            };
-
             try {
-                const newOrderRef = push(ref(db, 'orders'));
-                await set(newOrderRef, flatOrderData);
-                closeModalById('checkout-modal');
-                openModal('confirmation-modal');
-                cart = [];
-                updateCart();
+                const counterRef = ref(db, 'orderCounter');
+                const transactionResult = await runTransaction(counterRef, (currentData) => {
+                    return (currentData || 0) + 1;
+                });
+
+                if (transactionResult.committed) {
+                    const newOrderId = transactionResult.snapshot.val();
+                    const orderRef = ref(db, 'orders/' + newOrderId);
+
+                    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const flatOrderData = {
+                        orderId: newOrderId,
+                        customerType: customerInfo.type,
+                        customerName: customerInfo.name,
+                        customerGradeSection: customerInfo.gradeSection || 'N/A',
+                        customerFbUrl: customerInfo.fbUrl || 'N/A',
+                        customerPhone: customerInfo.phone || 'N/A',
+                        customerAddress: customerInfo.address || 'N/A',
+                        deliveryOption: customerInfo.deliveryOption,
+                        deliveryAddress: customerInfo.deliveryAddress || 'N/A',
+                        orderNotes: customerInfo.notes || 'N/A',
+                        orderedItems: JSON.stringify(cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))),
+                        subtotal: subtotal,
+                        deliveryFee: "To be confirmed based on location.",
+                        total: subtotal,
+                        status: 'Pending',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await set(orderRef, flatOrderData);
+                    
+                    closeModalById('checkout-modal');
+                    openModal('confirmation-modal');
+                    cart = [];
+                    updateCart();
+                } else {
+                    console.error("Order transaction was aborted.");
+                    alert("There was an issue placing your order. Please try again.");
+                }
             } catch (error) {
                 console.error("Error placing order: ", error);
                 alert("There was an error placing your order. Please try again.");
@@ -872,6 +885,7 @@
                 orderButton.textContent = 'Place Order';
             }
         }
+
 
         async function handleContactSubmit(e) {
             e.preventDefault();
