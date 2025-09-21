@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Express - Your One Stop, STEM Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+        body.loading, body.modal-open {
+            overflow: hidden;
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #8A2BE2, #00BFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .form-radio {
+            accent-color: #00BFFF;
+        }
+        .view-toggle-btn {
+            background-color: transparent;
+            color: #9ca3af;
+            transition: all 0.3s ease-in-out;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+        }
+        .view-toggle-btn.active {
+            background: linear-gradient(90deg, #8A2BE2, #00BFFF);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(0, 191, 255, 0.39);
+        }
+        .cart-bounce {
+            animation: bounce 0.6s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        .fly-to-cart {
+            position: fixed;
+            z-index: 100;
+            border-radius: 50%;
+            transition: all 1s ease-in-out;
+            object-fit: cover;
+        }
+        .price-tag {
+            background: linear-gradient(45deg, #8A2BE2, #00BFFF);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 15% 50%);
+        }
+        .logo-animation {
+            animation: pulse-glow 2.5s infinite alternate;
+            transition: transform 0.3s ease-in-out;
+        }
+        .logo-animation:hover {
+            transform: scale(1.1);
+        }
+        @keyframes pulse-glow {
+            0% {
+                filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.5));
+            }
+            100% {
+                filter: drop-shadow(0 0 15px rgba(138, 43, 226, 0.8));
+            }
+        }
+        #preloader {
+            transition: opacity 0.75s ease-in-out, transform 0.75s ease-in-out;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+        #preloader-logo {
+            animation: rocking-wave 2.5s ease-in-out infinite;
+        }
+        @keyframes rocking-wave {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(8deg) scale(1.05); }
+            75% { transform: rotate(-8deg) scale(1.05); }
+        }
+        #main-content {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        #main-content.visible {
+            opacity: 1;
+        }
+        .zoomable {
+            cursor: zoom-in;
+        }
+    </style>
+</head>
+<body class="loading">
+    <div id="preloader" class="fixed inset-0 bg-[#0a0a0a] z-[100] flex items-center justify-center">
+        <img src="https://i.postimg.cc/GhbXZfP4/Copy-of-STEM-EXPRESS-2-removebg-preview.png" id="preloader-logo" class="w-64 h-64 object-contain" alt="STEM Express Logo Loading">
+    </div>
+    <canvas id="bg-canvas"></canvas>
+    <div id="main-content" class="relative z-10">
+        <header class="py-4 px-4 sm:px-6 lg:px-8 sticky top-0 z-50 glass-card">
+            <nav class="container mx-auto flex justify-between items-center">
+                <a href="#" class="flex items-center">
+                    <img src="https://i.postimg.cc/GhbXZfP4/Copy-of-STEM-EXPRESS-2-removebg-preview.png" alt="STEM Express Logo" class="h-36 object-contain logo-animation" onerror="this.onerror=null;this.src='https://placehold.co/144x144/000000/FFFFFF?text=Logo';">
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors duration-300">Dashboard</a>
+                    <a href="#about" class="text-gray-300 hover:text-white transition-colors duration-300">About Us</a>
+                    <a href="#contact" class="text-gray-300 hover:text-white transition-colors duration-300">Contact</a>
+                </div>
+                <div class="flex items-center">
+                    <button id="cart-button" class="p-2 rounded-full text-gray-300 hover:text-white relative transition-colors" aria-label="Open shopping cart">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button id="mobile-menu-button" class="md:hidden p-2 ml-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 transition-colors" aria-label="Toggle mobile menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+            <div id="mobile-menu" class="hidden md:hidden mt-4">
+                <a href="#dashboard" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">Dashboard</a>
+                <a href="#about" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">About Us</a>
+                <a href="#contact" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">Contact</a>
+            </div>
+        </header>
+        <main id="home" class="container mx-auto px-4 sm:px-6 lg:px-8 text-center py-24 md:py-32">
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-4 text-white leading-tight">
+                Your One Stop, <br class="hidden sm:block"> <span class="gradient-text">STEM Shop</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 mb-8">
+                Pre-order delicious and innovative products created by STEM students of CNHS. From mouth-watering snacks to creative crafts, we've got something for everyone!
+            </p>
+            <a href="#dashboard" class="inline-block bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-cyan-500/50 transform hover:scale-105 transition-all duration-300">
+                Start Exploring
+            </a>
+        </main>
+        <div id="dashboard">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+                <div class="inline-flex rounded-lg shadow-sm bg-gray-800/50 p-1" role="group" aria-label="View options">
+                    <button type="button" id="view-shops-btn" class="view-toggle-btn active">
+                        <i class="fas fa-store mr-2"></i> View by Shop
+                    </button>
+                    <button type="button" id="view-all-products-btn" class="view-toggle-btn">
+                        <i class="fas fa-th-large mr-2"></i> View All Products
+                    </button>
+                </div>
+            </div>
+            <section id="businesses" class="py-12">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Explore Our Shops</h2>
+                    <div class="mb-8 flex justify-center">
+                        <div class="relative flex-grow max-w-xl">
+                            <input type="text" id="shop-search" placeholder="Search for shops or taglines..." class="w-full form-input rounded-full py-3 px-6 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="business-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                    </div>
+                </div>
+            </section>
+            <section id="all-products" class="py-12 hidden">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Our Full Menu</h2>
+                    <div class="mb-8 flex justify-center">
+                        <div class="relative flex-grow max-w-xl">
+                            <input type="text" id="product-search" placeholder="Search for products or shops..." class="w-full form-input rounded-full py-3 px-6 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="all-products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                    </div>
+                </div>
+            </section>
+        </div>
+        <section id="products-by-shop" class="py-20 hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-start mb-8">
+                    <button id="back-to-businesses" class="inline-flex items-center text-cyan-400 hover:text-cyan-300 font-semibold transition-colors duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to All Shops
+                    </button>
+                </div>
+                <h2 id="products-heading" class="text-3xl md:text-4xl font-bold text-center mb-12 text-white"></h2>
+                <div id="single-shop-product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                </div>
+            </div>
+        </section>
+        <section id="about" class="py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-5xl mx-auto glass-card rounded-2xl p-8 md:p-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-8 text-white">About <span class="gradient-text">STEM Express</span></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <p class="text-lg text-gray-300 leading-relaxed mb-4">
+                                STEM Express is a student-led initiative by the STEM students of Catanduanes National High School. We combine our knowledge in Science, Technology, Engineering, and Mathematics to create innovative products that solve real-world problems while showcasing our creativity.
+                            </p>
+                            <div class="mt-6 bg-gray-800 bg-opacity-50 p-4 rounded-lg border-l-4 border-cyan-500">
+                                <p class="text-gray-300 italic">"Everything you order from STEM Express is made-to-order, so please follow our Facebook page for updates on your order status and delivery information."</p>
+                                <div class="mt-4">
+                                    <a href="https://www.facebook.com/share/16TiJGA4Uy/?mibextid=wwXIfr" target="_blank" class="inline-flex items-center text-cyan-400 hover:text-cyan-300 font-semibold"><i class="fab fa-facebook mr-2"></i> Follow us on Facebook</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <img src="https://i.postimg.cc/R0tP6H4J/530807715-1289386155897265-8403188358513393858-n.jpg" alt="The STEM Express Team" class="rounded-lg shadow-lg w-full h-auto object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Our+Team';">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="contact" class="py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Get In Touch</h2>
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="glass-card rounded-2xl p-8">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-6">Contact Information</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start"><div class="flex-shrink-0 w-6 text-center"><i class="fas fa-map-marker-alt text-cyan-500 mt-1"></i></div><div class="ml-3"><p class="text-gray-300">Catanduanes National High School</p><p class="text-gray-400 text-sm">San Isidro Village, Virac, Catanduanes</p></div></div>
+                            <div class="flex items-start"><div class="flex-shrink-0 w-6 text-center"><i class="fas fa-phone-alt text-cyan-500 mt-1"></i></div><div class="ml-3"><p class="text-gray-300">09514342858 (Francis T. Saldua)</p></div></div>
+                            <div class="flex items-start"><div class="flex-shrink-0 w-6 text-center"><i class="fab fa-facebook text-cyan-500 mt-1"></i></div><div class="ml-3"><a href="https://www.facebook.com/share/16TiJGA4Uy/?mibextid=wwXIfr" target="_blank" class="text-gray-300 hover:text-cyan-400">STEM Express Facebook Page</a></div></div>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-8">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-6">Send Us a Message</h3>
+                        <form id="contact-form" class="space-y-4">
+                            <div><label for="name" class="sr-only">Your Name</label><input type="text" id="name" name="name" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Name"></div>
+                            <div><label for="email" class="sr-only">Your Email</label><input type="email" id="email" name="email" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Email"></div>
+                            <div><label for="message" class="sr-only">Your Message</label><textarea id="message" name="message" rows="4" required class="form-input w-full rounded-md py-2 px-3 focus:ring-2 focus:ring-cyan-500 placeholder-gray-400" placeholder="Your Message"></textarea></div>
+                            <div><button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Send</button></div>
+                        </form>
+                        <div id="contact-form-feedback" class="text-center mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="py-12 mt-20 border-t border-gray-800">
+            <div class="container mx-auto text-center text-gray-500">
+                <p>&copy; 2025 STEM Express. All Rights Reserved.</p>
+                <p class="mt-2 text-sm">Developer: Francis T. Saldua</p>
+            </div>
+        </footer>
+    </div>
+    <div id="modals-container"></div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getDatabase, ref, set, runTransaction } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgKCFUvQ___3HXsT9xLA3ZIbchywwpY6M",
+            authDomain: "stem-express-9512e.firebaseapp.com",
+            databaseURL: "https://stem-express-9512e-default-rtdb.firebaseio.com",
+            projectId: "stem-express-9512e",
+            storageBucket: "stem-express-9512e.appspot.com",
+            messagingSenderId: "577722816518",
+            appId: "1:577722816518:web:e6c626c820d4d54a794b87",
+            measurementId: "G-W2BL0DXXG3"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        const products = [
+             // Existing Products
+            { id: 1, name: "Organic Lip Balm", price: 99, image: "https://i.postimg.cc/7LVsJXQC/Final-Product-Photo-2.jpg", description: "Florelle is a handmade natural lip balm made with beeswax, shea butter, coconut oil, and essential oils to nourish lips while adding a touch of tint. Eco-friendly and affordable, it comes in biodegradable bamboo packaging, blending beauty, wellness, and sustainability.", tagline: "Bloom with every swipe", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/QMTrdMy6/LOGO.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+            { id: 2, name: "Pocket Aura (Heaven's Halo - Jasmine)", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Pocket Aura is a solid, eco-friendly perfume inspired by local scents like pandan, sampaguita, and orange peel, designed to be simple, lasting, and portable. Compact and spill-free, it lets you carry not just a fragrance, but a personal story in your pocket.", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+            { id: 3, name: "Pocket Aura (Engelure - Mint)", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Pocket Aura is a solid, eco-friendly perfume inspired by local scents like pandan, sampaguita, and orange peel, designed to be simple, lasting, and portable. Compact and spill-free, it lets you carry not just a fragrance, but a personal story in your pocket.", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+            { id: 4, name: "Pocket Aura (Crimson Thorn - Rose)", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Pocket Aura is a solid, eco-friendly perfume inspired by local scents like pandan, sampaguita, and orange peel, designed to be simple, lasting, and portable. Compact and spill-free, it lets you carry not just a fragrance, but a personal story in your pocket.", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+            { id: 5, name: "PiliSpark", price: 25, image: "https://i.postimg.cc/3rG1W1k3/chosen-edited-product-picture.png", description: "PiliSpark is an eco-friendly fire starter made from beeswax or soy wax, cotton, recycled paper, and pili shells and peelings sourced from local farmers. It supports waste reduction and local livelihoods while providing a safe, affordable, and non-toxic alternative to commercial fire starters.", tagline: "Basura to Pulbura", distributor: { name: "Pilino", logoUrl: "https://i.postimg.cc/rmbg2tzw/Chosen-Logo-w-background.png", teamImage: "https://i.postimg.cc/8Cw3KHh2/Pilino-group-picture.avif" } },
+            { id: 6, name: "TiO2mist", price: 61, image: "https://i.postimg.cc/FK9FkTr8/531556760-1804234700975450-6069498273987349863-n.jpg", description: "TiO2mist is a self-cleaning fabric spray that uses titanium dioxide technology to keep clothes fresh while reducing water use, detergent costs, and time spent on laundry. Positioned in the eco-friendly household product industry, it will initially be distributed through online retail platforms.", tagline: "A Gentle Mist, A Powerful Clean", distributor: { name: "TiO2mist", logoUrl: "https://i.postimg.cc/VLL3t2nj/Your-paragraph-text-4.png", teamImage: "https://i.postimg.cc/3JQvzGBN/Group-Photo.jpg" } },
+            { id: 7, name: "Mossy Munch (Mini Pack)", price: 15, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Mossy Munch: Moringo are nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering iodine, protein, iron, and other essential nutrients. With a soft, chewy texture and savory umami flavor, they serve as a healthy, eco-friendly, and affordable alternative to junk food, perfect for any time of the day.", tagline: "Ang Masarap na Mamimiss Mo", distributor: { name: "Mossy Munch", logoUrl: "https://i.postimg.cc/PxzghccN/received-773607785547552.jpg", teamImage: "https://i.postimg.cc/KzFW9fzb/received-2014064536022677.jpg" } },
+            { id: 8, name: "Mossy Munch (Snack Pack)", price: 25, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Mossy Munch: Moringo are nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering iodine, protein, iron, and other essential nutrients. With a soft, chewy texture and savory umami flavor, they serve as a healthy, eco-friendly, and affordable alternative to junk food, perfect for any time of the day.", tagline: "Ang Masarap na Mamimiss Mo", distributor: { name: "Mossy Munch", logoUrl: "https://i.postimg.cc/PxzghccN/received-773607785547552.jpg", teamImage: "https://i.postimg.cc/KzFW9fzb/received-2014064536022677.jpg" } },
+            { id: 9, name: "Mossy Munch (Family Pack)", price: 55, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Mossy Munch: Moringo are nutritious, bite-sized snacks made from guso (seaweed), mung beans, and malunggay leaves, offering iodine, protein, iron, and other essential nutrients. With a soft, chewy texture and savory umami flavor, they serve as a healthy, eco-friendly, and affordable alternative to junk food, perfect for any time of the day.", tagline: "Ang Masarap na Mamimiss Mo", distributor: { name: "Mossy Munch", logoUrl: "https://i.postimg.cc/PxzghccN/received-773607785547552.jpg", teamImage: "https://i.postimg.cc/KzFW9fzb/received-2014064536022677.jpg" } },
+            { id: 10, name: "WheyBight Delights (Chocolate Blast - 1 pc)", price: 20, image: "https://i.postimg.cc/1XQ4MwDN/529456771-1996338247796104-1230219555997373763-n.jpg", description: "WheyBight Delights is a healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful—this protein-packed treat satisfies your cravings while fueling your body.", tagline: "Fulfill your day, The tasty whey", distributor: { name: "Wheybight Creation", logoUrl: "https://i.postimg.cc/W1687wr0/521393652-2944548202383541-8995479539948762165-n.jpg", teamImage: "https://i.postimg.cc/vmZrtFGd/IMG-20250818-161315.jpg" } },
+            { id: 11, name: "WheyBight Delights (Chocolate Blast - Box of 10)", price: 200, image: "https://i.postimg.cc/1XQ4MwDN/529456771-1996338247796104-1230219555997373763-n.jpg", description: "WheyBight Delights is a healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful—this protein-packed treat satisfies your cravings while fueling your body.", tagline: "Fulfill your day, The tasty whey", distributor: { name: "Wheybight Creation", logoUrl: "https://i.postimg.cc/W1687wr0/521393652-2944548202383541-8995479539948762165-n.jpg", teamImage: "https://i.postimg.cc/vmZrtFGd/IMG-20250818-161315.jpg" } },
+            { id: 12, name: "WheyBight Delights (Cookies & Cream - 1 pc)", price: 25, image: "https://i.postimg.cc/ZR3CrVvS/531572078-614712121432826-9155339253311664220-n.jpg", description: "WheyBight Delights is a healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful—this protein-packed treat satisfies your cravings while fueling your body.", tagline: "Fulfill your day, The tasty whey", distributor: { name: "Wheybight Creation", logoUrl: "https://i.postimg.cc/W1687wr0/521393652-2944548202383541-8995479539948762165-n.jpg", teamImage: "https://i.postimg.cc/vmZrtFGd/IMG-20250818-161315.jpg" } },
+            { id: 13, name: "WheyBight Delights (Cookies & Cream - Box of 10)", price: 250, image: "https://i.postimg.cc/ZR3CrVvS/531572078-614712121432826-9155339253311664220-n.jpg", description: "WheyBight Delights is a healthier twist on the classic Filipino polvoron, made with premium whey protein to give you a nutritious boost in every bite. Soft, crumbly, and flavorful—this protein-packed treat satisfies your cravings while fueling your body.", tagline: "Fulfill your day, The tasty whey", distributor: { name: "Wheybight Creation", logoUrl: "https://i.postimg.cc/W1687wr0/521393652-2944548202383541-8995479539948762165-n.jpg", teamImage: "https://i.postimg.cc/vmZrtFGd/IMG-20250818-161315.jpg" } },
+            { id: 14, name: "EcoClean Pods (Lemon Fresh - 5 pcs)", price: 15, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 15, name: "EcoClean Pods (Lemon Fresh - 30 pcs)", price: 80, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 16, name: "EcoClean Pods (Tea Tree Shield - 5 pcs)", price: 15, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 17, name: "EcoClean Pods (Tea Tree Shield - 30 pcs)", price: 80, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 18, name: "EcoClean Pods (Lavender Relax - 5 pcs)", price: 15, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 19, name: "EcoClean Pods (Lavender Relax - 30 pcs)", price: 80, image: "https://i.postimg.cc/mrNByJ2B/IMG20250817233751.jpg", description: "EcoClean Pods are easy-to-use cleaning capsules made from safe, eco-friendly, and biodegradable ingredients. Just drop one into water, and it instantly turns into a powerful cleaning solution no mess, no fuss.", tagline: "Clean smarter. Live greener.", distributor: { name: "PurePods Co.", logoUrl: "https://i.postimg.cc/zX2YQxFC/IMG-20250816-193425.jpg", teamImage: "https://i.postimg.cc/9F73BKJK/Messenger-creation-1845156392755025.jpg" } },
+            { id: 20, name: "Abaca Blossom Tea (Original)", price: 7, image: "https://i.postimg.cc/JzxmRwCv/Product-Picture.jpg", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. It promotes local farming while providing a comforting and memorable tea experience.", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 21, name: "Abaca Blossom Tea (Ginger)", price: 8, image: "https://i.postimg.cc/JzxmRwCv/Product-Picture.jpg", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. It promotes local farming while providing a comforting and memorable tea experience.", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 22, name: "Abaca Blossom Tea (Oregano)", price: 8, image: "https://i.postimg.cc/JzxmRwCv/Product-Picture.jpg", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. It promotes local farming while providing a comforting and memorable tea experience.", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 23, name: "Abaca Blossom Tea (Pandan)", price: 8, image: "https://i.postimg.cc/JzxmRwCv/Product-Picture.jpg", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. It promotes local farming while providing a comforting and memorable tea experience.", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 24, name: "Abaca Blossom Tea (Assorted Box - 4 pcs)", price: 29, image: "https://i.postimg.cc/JzxmRwCv/Product-Picture.jpg", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. It promotes local farming while providing a comforting and memorable tea experience.", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 25, name: "Abaca Blossom Tea (Assorted Box - 8 pcs)", price: 54, image: "https://i.postimg.cc/JzxmRwCv/Product-Picture.jpg", description: "Abaca Blossom Tea, or Tsaabaca, is a sustainably crafted beverage made from often-discarded abaca blossoms, offering rich flavor and premium quality. It promotes local farming while providing a comforting and memorable tea experience.", tagline: "From the heart of abaca, to the heart of you. Tara, Tea 'ta!", distributor: { name: "TsaAbaca", logoUrl: "https://i.postimg.cc/LsRnSzJ4/Company-Logo.jpg", teamImage: "https://i.postimg.cc/LXxqNn69/Group-Members.jpg" } },
+            { id: 26, name: "EcoLeon Dishwashing Tablets (5 pcs)", price: 15, image: "https://i.postimg.cc/q7SRK15m/solo3.jpg", description: "Ecoleon Dishwashing Tablets are pre-measured, eco-friendly tablets made from natural, biodegradable ingredients that clean dishes effectively without harmful chemicals. Convenient and safe for families and the environment, they promote greener living through both their gentle formula and sustainable packaging.", tagline: "Dissolve & Wash", distributor: { name: "EcoLeon", logoUrl: "https://i.postimg.cc/Pxqqg2R1/logo-nontransparent.jpg", teamImage: "https://i.postimg.cc/d0kQJ8VG/group-pic.jpg" } },
+            { id: 27, name: "EcoLeon Dishwashing Tablets (30 pcs)", price: 80, image: "https://i.postimg.cc/q7SRK15m/solo3.jpg", description: "Ecoleon Dishwashing Tablets are pre-measured, eco-friendly tablets made from natural, biodegradable ingredients that clean dishes effectively without harmful chemicals. Convenient and safe for families and the environment, they promote greener living through both their gentle formula and sustainable packaging.", tagline: "Dissolve & Wash", distributor: { name: "EcoLeon", logoUrl: "https://i.postimg.cc/Pxqqg2R1/logo-nontransparent.jpg", teamImage: "https://i.postimg.cc/d0kQJ8VG/group-pic.jpg" } },
+            { id: 28, name: "Wellbelly Bites (35g)", price: 15, image: "https://i.postimg.cc/kX6TFGGf/wellebelly-bite-pic.jpg", description: "From bitter to better! Say goodbye to the bitter face! Wellbelly Bites are the tasty, fun way to get your daily dose of goodness from ampalaya (bitter melon) juice. We’ve transformed a traditional health remedy into a delicious and chewy gummy, so you can enjoy it without the bitter aftertaste.", tagline: "From bitter to better!!!", distributor: { name: "Wellbelly Bites", logoUrl: "https://i.postimg.cc/nr50fbR4/Wellbelly-bites-20250817-230602-0000.png", teamImage: "https://i.postimg.cc/vHcNqXq7/Memberpic.jpg" } },
+            { id: 29, name: "Wellbelly Bites (75g)", price: 30, image: "https://i.postimg.cc/kX6TFGGf/wellebelly-bite-pic.jpg", description: "From bitter to better! Say goodbye to the bitter face! Wellbelly Bites are the tasty, fun way to get your daily dose of goodness from ampalaya (bitter melon) juice. We’ve transformed a traditional health remedy into a delicious and chewy gummy, so you can enjoy it without the bitter aftertaste.", tagline: "From bitter to better!!!", distributor: { name: "Wellbelly Bites", logoUrl: "https://i.postimg.cc/nr50fbR4/Wellbelly-bites-20250817-230602-0000.png", teamImage: "https://i.postimg.cc/vHcNqXq7/Memberpic.jpg" } },
+            { id: 30, name: "Zesty Pomelo Breeze", price: 0, image: "https://i.postimg.cc/hv6vLpv4/Product-Photo.jpg", description: "Magnolentarres’ Zesty Pomelo Breeze is a handcrafted scented wax sachet made from natural beeswax or soy wax, infused with pure pomelo essential oil and stabilized with stearic acid. Decorated with dried flowers and botanicals, it refreshes the air, repels mosquitoes, and releases fragrance without heating—safe, convenient, and perfect for any space when placed in a cloth bag or mesh pouch.", tagline: "A scent that takes all to heaven", distributor: { name: "Magnolentarres", logoUrl: "https://i.postimg.cc/2SbNMQKJ/Chosen-Logo.jpg", teamImage: "https://i.postimg.cc/J0GtH91d/530834174-782532684303528-1925774131461403524-n.jpg" } },
+            
+            // New Products
+            { id: 31, name: "Ampamote Bites", price: 25, image: "https://i.postimg.cc/6q19GZ6Z/IMG-20250817-184302-015.jpg", description: "A crispy and healthy snack made from mashed sweet potato (kamote) and bitter gourd (ampalaya), shaped into chips, and air-fried for less oil. Rich in fiber and vitamins, it offers a unique sweet-and-bitter taste and comes in cheese, barbeque, and sourcream flavors. Contains no artificial preservatives.", tagline: "From bitter to better.", distributor: { name: "AmpaLicious Gummies", logoUrl: "https://i.postimg.cc/Kvz5B9sx/IMG-1955.jpg", teamImage: "https://i.postimg.cc/MHJ0JcJy/IMG-20250822-135147-060.jpg" } },
+            { id: 32, name: "Calafizz", price: 30, image: "https://i.postimg.cc/wMWhywsk/Final-Product-Pic.jpg", description: "A homemade probiotic calamansi soda brewed with a ginger bug. It's a fizzy, tangy, and gut-friendly alternative to sugary soft drinks. Made from fresh, locally sourced calamansi and ginger, Calafizz promotes digestion, hydration, and immunity, making it a smarter choice for health-conscious consumers.", tagline: "Made with culture, literally", distributor: { name: "Calafizz", logoUrl: "https://i.postimg.cc/9QvkZKcf/511194937-2166103290477492-3371060039443138167-n.jpg", teamImage: "https://i.postimg.cc/g0RqSyfY/Logo.png" } },
+            { id: 33, name: "Spicy Mango Popsicle (Toasted Coconut)", price: 35, image: "https://i.postimg.cc/8CfjdvLy/IMG-0104.jpg", description: "A one-of-a-kind frozen snack experience, crafted from fresh ripe mangoes blended with a special chili mix. The popsicle is dipped in melted chocolate and finished with a unique coating for the perfect mix of sweet, spicy, and refreshing.", tagline: "Chill to the Burn", distributor: { name: "Chill & Burn", logoUrl: "https://i.postimg.cc/cCKQ3QMy/Chi-Bu-Logo.png", teamImage: "https://i.postimg.cc/RFCLHLJF/Chi-Bu-Team-Picture.jpg" } },
+            { id: 34, name: "Spicy Mango Popsicle (Choco Tajín Twist)", price: 35, image: "https://i.postimg.cc/Bv5GGQ3S/IMG-0101.jpg", description: "A one-of-a-kind frozen snack experience, crafted from fresh ripe mangoes blended with a special chili mix. The popsicle is dipped in melted chocolate and finished with a unique coating for the perfect mix of sweet, spicy, and refreshing.", tagline: "Chill to the Burn", distributor: { name: "Chill & Burn", logoUrl: "https://i.postimg.cc/cCKQ3QMy/Chi-Bu-Logo.png", teamImage: "https://i.postimg.cc/RFCLHLJF/Chi-Bu-Team-Picture.jpg" } },
+            { id: 35, name: "Pastillas de Lubi-lubi", price: 15, image: "https://i.postimg.cc/L6zPF0nZ/received-775354502094135.jpg", description: "A self-made milk chew candy mixed with natural extracts from the Lubi-Lubi (Ficus pseudopalma) plant, known for its health benefits. This creamy and bittersweet treat provides antioxidants and supports blood sugar regulation. Perfect for health-conscious consumers seeking a delicious and functional snack.", tagline: "Tamis-Pait na Hahanap-hanapin Mo!", distributor: { name: "Pastillas de Lubi-lubi", logoUrl: "https://i.postimg.cc/HLqp4PtK/received-4385289185032574.jpg", teamImage: "https://i.postimg.cc/X7bfqyGh/received-685006761214802.jpg" } },
+            { id: 36, name: "Gummified (6 pcs)", price: 20, image: "https://i.postimg.cc/2SCgQ6J9/sample-photo.jpg", description: "A chewy, flavourful treat made from fresh upo—perfect for guilt-free snacking. It provides a nutritious alternative to typical sugary snacks and is a good source of several vitamins. Each bite delivers a perfect balance of chewy texture and subtle sweetness, made from fresh, sustainably sourced ingredients.", tagline: "nakUPO! GUMMYgiling sa sarap!", distributor: { name: "Gummified", logoUrl: "https://i.postimg.cc/3wnSCFpd/logo-1.png", teamImage: "https://i.postimg.cc/vmfRM8Wq/groupphoto.png" } },
+            { id: 37, name: "PinoBread (Classic Original)", price: 8.99, image: "https://i.postimg.cc/vmCXX5kD/IMG-1952.jpg", description: "A unique and healthier bread that uses the mild, refreshing taste of cucumber for natural moisture, vitamins, and antioxidants, making it taste lighter and softer. A new alternative for your typical daily bread, packed with nutrients.", tagline: "Fine by me, Healteh!", distributor: { name: "PinoBread", logoUrl: "https://i.postimg.cc/KYnWwq2C/Pino-Bread-20250920-170612-0000.png", teamImage: "https://i.postimg.cc/44PprS2F/Messenger-creation-1863452830912427.jpg" } },
+            { id: 38, name: "PinoBread (Cheesy Delight)", price: 9.99, image: "https://i.postimg.cc/4xqzTs5S/IMG-1953.jpg", description: "A unique and healthier bread that uses the mild, refreshing taste of cucumber for natural moisture, vitamins, and antioxidants, making it taste lighter and softer. This version is full of creamy cheese for a savory experience.", tagline: "Fine by me, Healteh!", distributor: { name: "PinoBread", logoUrl: "https://i.postimg.cc/KYnWwq2C/Pino-Bread-20250920-170612-0000.png", teamImage: "https://i.postimg.cc/44PprS2F/Messenger-creation-1863452830912427.jpg" } },
+            { id: 39, name: "PinoBread (Mango Delecta)", price: 13.99, image: "https://i.postimg.cc/PJVCzQVR/IMG-1954.jpg", description: "A unique and healthier bread that uses the mild, refreshing taste of cucumber for natural moisture, vitamins, and antioxidants, making it taste lighter and softer. This version has a rich sweet and delicate mango taste, perfect for sweet bites.", tagline: "Fine by me, Healteh!", distributor: { name: "PinoBread", logoUrl: "https://i.postimg.cc/KYnWwq2C/Pino-Bread-20250920-170612-0000.png", teamImage: "https://i.postimg.cc/44PprS2F/Messenger-creation-1863452830912427.jpg" } },
+            { id: 40, name: "OniCrunch", price: 45, image: "https://i.postimg.cc/LXyW2KV9/IMG-5023.avif", description: "A Filipino-Japanese fusion snack made with rice, seasoned egg, and meatloaf, drizzled with a special sauce, coated in breadcrumbs, and deep-fried to crispy perfection while staying soft and flavorful inside. Sourced from local markets, it’s a hearty, on-the-go meal best enjoyed hot.", tagline: "Crave It. Taste It. Love It.", distributor: { name: "OniCrunch", logoUrl: "https://i.postimg.cc/pVzhbjgm/PRODUCT-LOGO.jpg", teamImage: "https://i.postimg.cc/3JzPkhQW/GROUP-PICTURE.avif" } }
+        ];
+
+        const uniqueBusinesses = Object.values(products.reduce((acc, product) => {
+            const bizName = product.distributor.name;
+            if (!acc[bizName]) {
+                acc[bizName] = { name: bizName, logoUrl: product.distributor.logoUrl, teamImage: product.distributor.teamImage, tagline: product.tagline };
+            }
+            return acc;
+        }, {}));
+
+        let cart = [];
+
+        window.onload = () => {
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('main-content');
+            setTimeout(() => {
+                preloader.classList.add('hidden');
+                mainContent.classList.add('visible');
+                document.body.classList.remove('loading');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 750);
+            }, 2500);
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAllModals();
+            setupEventListeners();
+            renderBusinesses(uniqueBusinesses, document.getElementById('business-grid'));
+            const groupedProducts = groupProductVariants(products);
+            renderProducts(groupedProducts, document.getElementById('all-products-grid'));
+            updateCart();
+        });
+
+        function renderBusinesses(businessesToRender, container) {
+            if (!container) return;
+            container.innerHTML = businessesToRender.map(b => `
+                <div class="business-card glass-card rounded-2xl p-4 flex flex-col items-center text-center group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-business-name="${b.name}">
+                    <img src="${b.logoUrl}" alt="Logo for ${b.name}" class="w-24 h-24 rounded-full mb-4 border-2 border-cyan-500/50 object-cover zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/FFFFFF/000000?text=Logo';">
+                    <h3 class="text-lg font-bold text-white mb-2 truncate w-full">${b.name}</h3>
+                    <p class="text-gray-400 text-sm flex-grow line-clamp-2">"${b.tagline}"</p>
+                    <div class="mt-auto pt-4 w-full">
+                        <span class="inline-block bg-gray-700 text-white py-2 px-4 rounded-full text-sm group-hover:bg-cyan-500 transition-colors duration-300 w-full">View Products</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProducts(productsToRender, container) {
+            if (!container) return;
+            const isMainProductGrid = container.id === 'all-products-grid';
+
+            if (isMainProductGrid) {
+                container.innerHTML = productsToRender.map(gp => `
+                    <div class="product-card grouped-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-base-name="${gp.baseName}">
+                        <div class="flex items-center mb-2">
+                            <img src="${gp.distributor.logoUrl}" alt="${gp.distributor.name}" class="w-8 h-8 rounded-full mr-3 zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <span class="text-sm text-gray-400 truncate">${gp.distributor.name}</span>
+                        </div>
+                        <div class="relative mb-4 pointer-events-none">
+                            <img src="${gp.image}" alt="${gp.baseName}" class="product-image rounded-lg w-full h-48 object-cover zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
+                            ${gp.variants.length > 1 ? `<div class="absolute top-2 right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full">Variants: ${gp.variants.length}</div>` : ''}
+                        </div>
+                        <div class="pointer-events-none">
+                            <h3 class="text-lg font-bold text-white mb-2 truncate">${gp.baseName}</h3>
+                            <p class="text-gray-400 text-sm flex-grow mb-4 line-clamp-2">${gp.description}</p>
+                        </div>
+                       <div class="mt-auto text-center">
+                            <span class="inline-block text-cyan-400 text-sm font-semibold group-hover:text-cyan-300 transition-colors duration-300">View Options</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = productsToRender.map(p => `
+                    <div class="product-card individual-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-id="${p.id}">
+                        <div class="flex items-center mb-2">
+                            <img src="${p.distributor.logoUrl}" alt="${p.distributor.name}" class="w-8 h-8 rounded-full mr-3 zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <span class="text-sm text-gray-400 truncate">${p.distributor.name}</span>
+                        </div>
+                        <div class="relative mb-4 pointer-events-none">
+                            <img src="${p.image}" alt="${p.name}" class="product-image rounded-lg w-full h-48 object-cover zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
+                            <div class="absolute top-2 -left-2 price-tag text-white text-lg font-bold px-4 py-1 shadow-lg">₱${p.price.toFixed(2)}</div>
+                        </div>
+                        <div class="pointer-events-none">
+                            <h3 class="text-lg font-bold text-white mb-2 truncate">${p.name}</h3>
+                            <p class="text-gray-400 text-sm flex-grow mb-4 line-clamp-2">${p.description}</p>
+                        </div>
+                        <div class="mt-auto">
+                            <button class="add-to-cart bg-gray-700 hover:bg-cyan-500 text-white py-2 px-4 rounded-full text-sm transition-colors duration-300 flex items-center justify-center w-full" data-id="${p.id}"><i class="fas fa-cart-plus mr-2"></i> Add to Cart</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function showProductsForBusiness(businessName) {
+            const productsOfBusiness = products.filter(p => p.distributor.name === businessName);
+            document.getElementById('products-heading').innerHTML = `Products by <span class="gradient-text">${businessName}</span>`;
+            renderProducts(productsOfBusiness, document.getElementById('single-shop-product-grid'));
+            document.getElementById('businesses').classList.add('hidden');
+            document.getElementById('all-products').classList.add('hidden');
+            document.getElementById('products-by-shop').classList.remove('hidden');
+            document.getElementById('products-by-shop').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showAllBusinesses() {
+            document.getElementById('products-by-shop').classList.add('hidden');
+            document.getElementById('all-products').classList.add('hidden');
+            document.getElementById('businesses').classList.remove('hidden');
+            document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('view-shops-btn').classList.add('active');
+            document.getElementById('view-all-products-btn').classList.remove('active');
+        }
+
+        function viewProductVariants(baseName, groupedProducts) {
+            const group = groupedProducts.find(gp => gp.baseName === baseName);
+            if (!group) return;
+            
+            if (group.variants.length === 1) {
+                viewProduct(group.variants[0].id);
+                return;
+            }
+
+            const modal = document.getElementById('product-variants-modal');
+            if (!modal) return;
+
+            modal.querySelector('#variants-modal-title').textContent = group.baseName;
+            modal.querySelector('#variants-modal-description').textContent = group.description;
+            modal.querySelector('#variants-modal-tagline').textContent = `"${group.tagline}"`;
+            modal.querySelector('#variants-modal-distributor-logo').src = group.distributor.logoUrl;
+            modal.querySelector('#variants-modal-distributor-logo').alt = `${group.distributor.name} Logo`;
+            modal.querySelector('#variants-modal-distributor-name').textContent = `Sold by ${group.distributor.name}`;
+            modal.querySelector('#variants-modal-team-image').src = group.distributor.teamImage;
+            
+            const variantsContainer = modal.querySelector('#variants-list-container');
+            variantsContainer.innerHTML = group.variants.map(variant => `
+                <div class="glass-card rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 hover:bg-gray-800/50 transition-colors">
+                    <img src="${variant.image}" alt="${variant.name}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0 zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1a1a1a/FFFFFF?text=Img';">
+                    <div class="flex-grow">
+                        <h5 class="font-bold text-white">${variant.name}</h5>
+                    </div>
+                    <div class="flex flex-col items-end flex-shrink-0">
+                        <span class="text-lg font-bold text-white mb-2">₱${variant.price.toFixed(2)}</span>
+                        <button class="add-to-cart bg-gray-700 hover:bg-cyan-500 text-white py-2 px-4 rounded-full text-sm transition-colors duration-300 flex items-center" data-id="${variant.id}">
+                            <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            openModal('product-variants-modal');
+        }
+
+        function closeModalById(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (!document.querySelector('.fixed.inset-0.z-50.flex')) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
+        }
+        window.closeModalById = closeModalById;
+
+        function groupProductVariants(productsArray) {
+            const grouped = {};
+            productsArray.forEach(product => {
+                const baseNameMatch = product.name.match(/^(.*?)\s*\(/);
+                const baseName = baseNameMatch ? baseNameMatch[1].trim() : product.name;
+
+                if (!grouped[baseName]) {
+                    grouped[baseName] = {
+                        baseName: baseName,
+                        variants: [],
+                        image: product.image,
+                        description: product.description,
+                        distributor: product.distributor,
+                        tagline: product.tagline
+                    };
+                }
+                grouped[baseName].variants.push(product);
+            });
+            return Object.values(grouped);
+        }
+
+        function setupEventListeners() {
+            const shopsBtn = document.getElementById('view-shops-btn');
+            const allProductsBtn = document.getElementById('view-all-products-btn');
+            const businessesSection = document.getElementById('businesses');
+            const allProductsSection = document.getElementById('all-products');
+
+            shopsBtn.addEventListener('click', () => {
+                businessesSection.classList.remove('hidden');
+                allProductsSection.classList.add('hidden');
+                shopsBtn.classList.add('active');
+                allProductsBtn.classList.remove('active');
+            });
+
+            allProductsBtn.addEventListener('click', () => {
+                businessesSection.classList.add('hidden');
+                allProductsSection.classList.remove('hidden');
+                shopsBtn.classList.remove('active');
+                allProductsBtn.classList.add('active');
+            });
+
+            document.addEventListener('click', e => {
+                if (e.target.classList.contains('zoomable') && e.target.closest('#image-viewer-modal') === null) {
+                    const imageViewerModal = document.getElementById('image-viewer-modal');
+                    const zoomedImage = document.getElementById('zoomed-image');
+                    if (imageViewerModal && zoomedImage) {
+                        zoomedImage.src = e.target.src;
+                        openModal('image-viewer-modal');
+                    }
+                }
+                
+                if (e.target.id === 'close-image-viewer' || e.target.id === 'image-viewer-modal') {
+                    const zoomedImage = document.getElementById('zoomed-image');
+                    zoomedImage.src = "";
+                    closeModalById('image-viewer-modal');
+                }
+
+                const addToCartButton = e.target.closest('.add-to-cart');
+                if (addToCartButton) {
+                    addToCart(addToCartButton.dataset.id, 1, e);
+                }
+
+                const productCard = e.target.closest('.product-card');
+                if (productCard && !addToCartButton) {
+                    if (productCard.classList.contains('grouped-product-card')) {
+                        const baseName = productCard.dataset.baseName;
+                        const groupedProducts = groupProductVariants(products);
+                        viewProductVariants(baseName, groupedProducts);
+                    } else if (productCard.classList.contains('individual-product-card')) {
+                        viewProduct(productCard.dataset.id);
+                    }
+                }
+                
+                const businessCard = e.target.closest('.business-card');
+                if (businessCard && !e.target.classList.contains('zoomable')) {
+                    showProductsForBusiness(businessCard.dataset.businessName);
+                }
+                if (e.target.closest('#back-to-businesses')) {
+                    showAllBusinesses();
+                }
+                if (e.target.closest('#cart-button')) openModal('cart-sidebar');
+                if (e.target.closest('#close-cart') || e.target.id === 'close-cart-overlay') closeModalById('cart-sidebar');
+                if (e.target.closest('.remove-item')) removeFromCart(e.target.closest('.remove-item').dataset.id);
+                if (e.target.closest('.increase-quantity')) {
+                    const item = cart.find(i => i.id == e.target.closest('.increase-quantity').dataset.id);
+                    if(item) updateCartItemQuantity(item.id, item.quantity + 1);
+                }
+                if (e.target.closest('.decrease-quantity')) {
+                    const item = cart.find(i => i.id == e.target.closest('.decrease-quantity').dataset.id);
+                    if(item) updateCartItemQuantity(item.id, item.quantity - 1);
+                }
+                if (e.target.closest('#close-modal')) closeModalById('product-modal');
+                if (e.target.closest('#increase-quantity-modal')) {
+                    let qtyInput = document.getElementById('product-quantity-input');
+                    qtyInput.value = parseInt(qtyInput.value) + 1;
+                }
+                if (e.target.closest('#decrease-quantity-modal')) {
+                    let qtyInput = document.getElementById('product-quantity-input');
+                    qtyInput.value = Math.max(1, parseInt(qtyInput.value) - 1);
+                }
+                if (e.target.id === 'add-to-cart-modal') {
+                    const quantity = parseInt(document.getElementById('product-quantity-input').value);
+                    addToCart(e.target.dataset.id, quantity, e);
+                    closeModalById('product-modal');
+                }
+                if (e.target.id === 'checkout-button') openModal('checkout-modal');
+                if (e.target.id === 'close-checkout-modal') closeModalById('checkout-modal');
+                if (e.target.id === 'place-order') handlePlaceOrder();
+                if (e.target.closest('#close-confirmation')) closeModalById('confirmation-modal');
+                if (e.target.closest('#mobile-menu-button')) {
+                    document.getElementById('mobile-menu').classList.toggle('hidden');
+                }
+            });
+            
+            document.getElementById('shop-search').addEventListener('input', e => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filtered = uniqueBusinesses.filter(b => b.name.toLowerCase().includes(searchTerm) || b.tagline.toLowerCase().includes(searchTerm));
+                renderBusinesses(filtered, document.getElementById('business-grid'));
+            });
+
+            document.getElementById('product-search').addEventListener('input', e => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredProducts = products.filter(p =>
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.description.toLowerCase().includes(searchTerm) ||
+                    p.distributor.name.toLowerCase().includes(searchTerm)
+                );
+                const filteredGroupedProducts = groupProductVariants(filteredProducts);
+                renderProducts(filteredGroupedProducts, document.getElementById('all-products-grid'));
+            });
+
+            document.addEventListener('change', e => {
+                if(e.target.classList.contains('quantity-input')) {
+                    updateCartItemQuantity(e.target.dataset.id, parseInt(e.target.value));
+                }
+                if(e.target.name === 'isStudent' || e.target.name === 'student-delivery' || e.target.name === 'non-student-delivery') {
+                    updateCheckoutFormVisibility();
+                    updateCartTotals();
+                }
+            });
+            document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
+        }
+        
+        function addToCart(productId, quantity = 1, event) {
+            const product = products.find(p => p.id == productId);
+            if (!product) return;
+            const existingItem = cart.find(item => item.id == productId);
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({ ...product, quantity });
+            }
+            updateCart();
+            
+            const card = event.target.closest('.product-card, .glass-card');
+            const productImage = card.querySelector('.product-image') || card.querySelector('img');
+            if (!productImage) return;
+            const flyingImage = productImage.cloneNode();
+            const rect = productImage.getBoundingClientRect();
+            const cartIcon = document.getElementById('cart-button');
+            const cartRect = cartIcon.getBoundingClientRect();
+
+            flyingImage.classList.add('fly-to-cart');
+            flyingImage.style.left = `${rect.left}px`;
+            flyingImage.style.top = `${rect.top}px`;
+            flyingImage.style.width = `${rect.width}px`;
+            flyingImage.style.height = `${rect.height}px`;
+            document.body.appendChild(flyingImage);
+            
+            requestAnimationFrame(() => {
+                flyingImage.style.left = `${cartRect.left + cartRect.width / 2}px`;
+                flyingImage.style.top = `${cartRect.top + cartRect.height / 2}px`;
+                flyingImage.style.width = '20px';
+                flyingImage.style.height = '20px';
+                flyingImage.style.opacity = '0';
+            });
+            
+            setTimeout(() => {
+                flyingImage.remove();
+                const cartIconElement = cartIcon.querySelector('i');
+                cartIconElement.classList.add('cart-bounce');
+                setTimeout(() => cartIconElement.classList.remove('cart-bounce'), 600);
+            }, 1000);
+        }
+
+        function updateCartItemQuantity(productId, quantity) {
+            const item = cart.find(item => item.id == productId);
+            if (item) {
+                item.quantity = Math.max(1, quantity);
+                updateCart();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id != productId);
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartSummary = document.getElementById('cart-summary');
+            const emptyCartMessage = document.getElementById('empty-cart-message');
+            if (!cartItemsContainer || !cartSummary || !emptyCartMessage) return;
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                emptyCartMessage.classList.remove('hidden');
+                cartSummary.classList.add('hidden');
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                cartSummary.classList.remove('hidden');
+                cartItemsContainer.innerHTML = cart.map(item => `
+                    <div class="bg-gray-800 rounded-lg p-3 flex items-start">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/64x64/0f172a/f8fafc?text=Img';">
+                        <div class="ml-4 flex-grow">
+                            <h4 class="text-sm font-medium text-white">${item.name}</h4>
+                            <p class="text-cyan-400 text-sm font-bold">₱${item.price.toFixed(2)}</p>
+                            <div class="mt-2 flex items-center">
+                                <button class="cart-quantity-btn decrease-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}"><i class="fas fa-minus text-xs"></i></button>
+                                <input type="number" min="1" value="${item.quantity}" class="quantity-input mx-2 w-12 bg-gray-700 border border-gray-600 rounded text-center text-white text-sm" data-id="${item.id}">
+                                <button class="cart-quantity-btn increase-quantity bg-gray-700 hover:bg-gray-600 text-white w-6 h-6 rounded flex items-center justify-center" data-id="${item.id}"><i class="fas fa-plus text-xs"></i></button>
+                            </div>
+                        </div>
+                        <button class="remove-item text-gray-400 hover:text-white ml-2" data-id="${item.id}"><i class="fas fa-times"></i></button>
+                    </div>
+                `).join('');
+            }
+            updateCartTotals();
+        }
+
+        function updateCartTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const deliveryText = "To be confirmed";
+            const totalText = `₱${subtotal.toFixed(2)} + Delivery`;
+
+            document.querySelectorAll('#cart-subtotal, #checkout-subtotal').forEach(el => el.textContent = `₱${subtotal.toFixed(2)}`);
+            document.querySelectorAll('#delivery-fee, #checkout-delivery').forEach(el => {
+                el.textContent = deliveryText;
+            });
+            document.querySelectorAll('#cart-total, #checkout-total').forEach(el => el.textContent = totalText);
+            
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (!document.querySelector('.fixed.inset-0.z-50.flex')) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
+        }
+
+        function viewProduct(productId) {
+            const product = products.find(p => p.id == productId);
+            if (!product) return;
+            const modal = document.getElementById('product-modal');
+            modal.querySelector('#modal-product-name').textContent = product.name;
+            modal.querySelector('#modal-product-image').src = product.image;
+            modal.querySelector('#modal-product-price').textContent = `₱${product.price.toFixed(2)}`;
+            modal.querySelector('#modal-product-description').textContent = product.description;
+            modal.querySelector('#modal-product-tagline').textContent = `"${product.tagline}"`;
+            modal.querySelector('#add-to-cart-modal').dataset.id = product.id;
+            modal.querySelector('#product-quantity-input').value = 1;
+            modal.querySelector('#distributor-logo').src = product.distributor.logoUrl;
+            modal.querySelector('#distributor-name').textContent = `Sold by ${product.distributor.name}`;
+            modal.querySelector('#team-image').src = product.distributor.teamImage;
+            openModal('product-modal');
+        }
+
+        function openCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            document.getElementById('checkout-items').innerHTML = cart.map(item => `
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-300">${item.name} x${item.quantity}</span>
+                    <span class="text-gray-300">₱${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+            updateCartTotals();
+            openModal('checkout-modal');
+        }
+
+        function updateCheckoutFormVisibility() {
+            const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
+            document.getElementById('student-form').style.display = isStudent ? 'block' : 'none';
+            document.getElementById('non-student-form').style.display = isStudent ? 'none' : 'block';
+            if (isStudent) {
+                const isSchoolDelivery = document.querySelector('input[name="student-delivery"]:checked').value === 'school';
+                document.getElementById('student-delivery-address-container').style.display = isSchoolDelivery ? 'none' : 'block';
+            }
+        }
+
+        async function handlePlaceOrder() {
+            const orderButton = document.getElementById('place-order');
+            orderButton.disabled = true;
+            orderButton.textContent = 'Placing Order...';
+            
+            const isStudent = document.querySelector('input[name="isStudent"]:checked').value === 'yes';
+            let customerInfo = {};
+            let validationError = false;
+
+            if (isStudent) {
+                customerInfo = { type: 'Student', name: document.getElementById('student-name').value, gradeSection: document.getElementById('grade-section').value, fbUrl: document.getElementById('student-fb').value, phone: document.getElementById('student-phone').value, deliveryOption: document.querySelector('input[name="student-delivery"]:checked').value, deliveryAddress: document.getElementById('student-delivery-address').value, notes: document.getElementById('notes').value };
+                if (!customerInfo.name || !customerInfo.gradeSection) validationError = true;
+            } else {
+                customerInfo = { type: 'Non-Student', name: document.getElementById('non-student-name').value, fbUrl: document.getElementById('non-student-fb').value, address: document.getElementById('non-student-address').value, phone: document.getElementById('non-student-phone').value, deliveryOption: document.querySelector('input[name="non-student-delivery"]:checked').value, notes: document.getElementById('notes').value };
+                if (!customerInfo.name || !customerInfo.address || !customerInfo.phone) validationError = true;
+            }
+
+            if (validationError) {
+                alert('Please fill in all required fields.');
+                orderButton.disabled = false;
+                orderButton.textContent = 'Place Order';
+                return;
+            }
+
+            try {
+                const counterRef = ref(db, 'orderCounter');
+                const transactionResult = await runTransaction(counterRef, (currentData) => {
+                    return (currentData || 0) + 1;
+                });
+
+                if (transactionResult.committed) {
+                    const newOrderId = transactionResult.snapshot.val();
+                    const orderRef = ref(db, 'orders/' + newOrderId);
+
+                    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const flatOrderData = {
+                        orderId: newOrderId,
+                        customerType: customerInfo.type,
+                        customerName: customerInfo.name,
+                        customerGradeSection: customerInfo.gradeSection || 'N/A',
+                        customerFbUrl: customerInfo.fbUrl || 'N/A',
+                        customerPhone: customerInfo.phone || 'N/A',
+                        customerAddress: customerInfo.address || 'N/A',
+                        deliveryOption: customerInfo.deliveryOption,
+                        deliveryAddress: customerInfo.deliveryAddress || 'N/A',
+                        orderNotes: customerInfo.notes || 'N/A',
+                        orderedItems: JSON.stringify(cart.map(item => ({ name: item.name, quantity: item.quantity, price: item.price }))),
+                        subtotal: subtotal,
+                        deliveryFee: "To be confirmed based on location.",
+                        total: subtotal,
+                        status: 'Pending',
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    await set(orderRef, flatOrderData);
+                    
+                    closeModalById('checkout-modal');
+                    openModal('confirmation-modal');
+                    cart = [];
+                    updateCart();
+                } else {
+                    console.error("Order transaction was aborted.");
+                    alert("There was an issue placing your order. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error placing order: ", error);
+                alert("There was an error placing your order. Please try again.");
+            } finally {
+                orderButton.disabled = false;
+                orderButton.textContent = 'Place Order';
+            }
+        }
+
+
+        async function handleContactSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const feedbackEl = document.getElementById('contact-form-feedback');
+            const button = form.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.textContent = 'Sending...';
+
+            try {
+                const messageData = { name: form.name.value, email: form.email.value, message: form.message.value, submittedAt: new Date().toISOString() };
+                const newMessageRef = push(ref(db, 'messages'));
+                await set(newMessageRef, messageData);
+                feedbackEl.textContent = "Thank you! Your message has been sent.";
+                feedbackEl.className = "text-emerald-400 text-center mt-4";
+                form.reset();
+            } catch (error) {
+                console.error("Error sending message: ", error);
+                feedbackEl.textContent = "Sorry, there was an error. Please try again.";
+                feedbackEl.className = "text-red-400 text-center mt-4";
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send';
+            }
+        }
+
+        function renderAllModals() {
+            document.getElementById('modals-container').innerHTML = `
+                <div id="cart-sidebar" class="fixed inset-0 z-50 hidden">
+                    <div class="absolute inset-0 bg-gray-900 bg-opacity-75" id="close-cart-overlay"></div>
+                    <div class="relative flex flex-col w-full max-w-md ml-auto h-full glass-card shadow-xl border-l border-gray-800">
+                        <div class="p-6 flex justify-between items-center border-b border-gray-800">
+                            <h2 class="text-2xl font-bold gradient-text">Your Cart</h2>
+                            <button id="close-cart" class="text-gray-400 hover:text-white" aria-label="Close cart"><i class="fas fa-times text-xl"></i></button>
+                        </div>
+                        <div class="p-6 overflow-y-auto flex-grow space-y-4" id="cart-items"></div>
+                        <div id="empty-cart-message" class="text-center py-10 hidden"><i class="fas fa-shopping-cart text-4xl text-gray-600 mb-4"></i><p class="text-gray-400">Your cart is empty</p></div>
+                        <div id="cart-summary" class="p-6 border-t border-gray-800 hidden">
+                            <div class="space-y-2 mb-4">
+                                <div class="flex justify-between"><span class="text-gray-400">Subtotal</span><span id="cart-subtotal"></span></div>
+                                <div class="flex justify-between"><span class="text-gray-400">Delivery Fee</span><span id="delivery-fee" class="text-sm italic"></span></div>
+                                <div class="flex justify-between text-lg font-bold"><span class="text-gray-300">Total</span><span id="cart-total" class="gradient-text"></span></div>
+                            </div>
+                            <button id="checkout-button" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Proceed to Checkout</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModalById('product-modal')"></div>
+                    <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-4xl w-full max-h-[90vh] flex flex-col">
+                        <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
+                            <div class="flex justify-end items-start mb-4"><button id="close-modal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div><img id="modal-product-image" src="" alt="Product Image" class="w-full h-auto object-cover rounded-lg shadow-lg sticky top-0 zoomable"></div>
+                                <div class="flex flex-col space-y-4">
+                                    <h3 id="modal-product-name" class="text-3xl leading-8 font-bold gradient-text"></h3>
+                                    <div class="p-2 bg-black bg-opacity-20 rounded-lg flex items-center w-fit">
+                                        <img id="distributor-logo" src="" alt="Distributor Logo" class="w-8 h-8 rounded-full mr-3 zoomable">
+                                        <span id="distributor-name" class="text-sm text-gray-300"></span>
+                                    </div>
+                                    <span id="modal-product-price" class="text-4xl font-bold text-white"></span>
+                                    <div><h4 class="text-md font-semibold text-white uppercase tracking-wider border-b border-gray-700 pb-1 mb-2">Description</h4><p id="modal-product-description" class="text-gray-300 text-sm"></p></div>
+                                    <div><h4 class="text-md font-semibold text-white uppercase tracking-wider border-b border-gray-700 pb-1 mb-2">Tagline</h4><p id="modal-product-tagline" class="italic text-gray-400 text-sm"></p></div>
+                                    <div><h4 class="text-md font-semibold text-white uppercase tracking-wider border-b border-gray-700 pb-1 mb-2">Meet the Creators</h4><img id="team-image" src="" alt="Team Photo" class="w-full rounded-lg shadow-lg zoomable" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Photo';"></div>
+                                    <div class="flex-grow"></div>
+                                    <div class="mt-auto pt-4 flex items-center justify-between">
+                                        <span class="font-semibold text-white text-lg">Quantity:</span>
+                                        <div class="flex items-center space-x-2"><button id="decrease-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"><i class="fas fa-minus"></i></button><input type="number" id="product-quantity-input" min="1" value="1" class="form-input text-center text-white w-16 h-10 rounded-md"><button id="increase-quantity-modal" class="bg-gray-700 hover:bg-gray-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"><i class="fas fa-plus"></i></button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-black bg-opacity-20 px-4 py-3 sm:px-6 border-t border-gray-700"><button id="add-to-cart-modal" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Add to Cart</button></div>
+                    </div>
+                </div>
+
+                <div id="product-variants-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModalById('product-variants-modal')"></div>
+                    <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-4xl max-h-[90vh] flex flex-col">
+                        <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 id="variants-modal-title" class="text-2xl leading-6 font-bold gradient-text"></h3>
+                                <button onclick="closeModalById('product-variants-modal')" class="text-gray-400 hover:text-white" aria-label="Close variants"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="mb-6 p-4 bg-black bg-opacity-20 rounded-lg">
+                                <p id="variants-modal-description" class="text-gray-300"></p>
+                                <p id="variants-modal-tagline" class="text-gray-400 italic mt-2"></p>
+                                <div class="mt-4 flex items-center">
+                                    <img id="variants-modal-distributor-logo" src="" alt="Distributor Logo" class="w-10 h-10 rounded-full mr-3 zoomable" loading="lazy">
+                                    <span id="variants-modal-distributor-name" class="text-sm text-gray-300"></span>
+                                </div>
+                            </div>
+                            <h4 class="text-xl font-bold text-white mb-4">Choose a Variant:</h4>
+                            <div id="variants-list-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                            <div class="mt-8 border-t border-gray-700 pt-6">
+                                <h4 class="text-xl font-bold text-white mb-4 text-center">Meet the Creators</h4>
+                                <img id="variants-modal-team-image" src="" alt="Team Photo" class="w-full max-w-md mx-auto h-auto rounded-lg shadow-lg zoomable" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Team+Photo';">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="checkout-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-gray-900 opacity-75" onclick="closeModalById('checkout-modal')"></div>
+                    <div class="relative glass-card rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-2xl w-full max-h-[90vh] flex flex-col">
+                        <div class="p-4 sm:p-6 flex-grow overflow-y-auto">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-2xl leading-6 font-bold gradient-text">Checkout</h3>
+                                <button id="close-checkout-modal" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Are you a CNHS student?</label>
+                                    <div class="flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="isStudent" value="yes" class="form-radio" checked><span class="ml-2 text-gray-300">Yes</span></label><label class="inline-flex items-center"><input type="radio" name="isStudent" value="no" class="form-radio"><span class="ml-2 text-gray-300">No</span></label></div>
+                                </div>
+                                <div id="student-form">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><label for="student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="student-name" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                        <div><label for="grade-section" class="block text-sm font-medium text-gray-300 mb-1">Grade & Section *</label><input type="text" id="grade-section" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    </div>
+                                    <div class="mt-4"><label for="student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    <div class="mt-4"><label for="student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number</label><input type="tel" id="student-phone" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    <div class="mt-4"><label class="block text-sm font-medium text-gray-300 mb-1">Delivery Option</label><div class="flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="student-delivery" value="school" class="form-radio" checked><span class="ml-2 text-gray-300">School Delivery (Free)</span></label><label class="inline-flex items-center"><input type="radio" name="student-delivery" value="other" class="form-radio"><span class="ml-2 text-gray-300">Other Location</span></label></div></div>
+                                    <div id="student-delivery-address-container" class="mt-4 hidden"><label for="student-delivery-address" class="block text-sm font-medium text-gray-300 mb-1">Delivery Address</label><input type="text" id="student-delivery-address" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                </div>
+                                <div id="non-student-form" class="hidden">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><label for="non-student-name" class="block text-sm font-medium text-gray-300 mb-1">Full Name *</label><input type="text" id="non-student-name" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                        <div><label for="non-student-phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number *</label><input type="tel" id="non-student-phone" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    </div>
+                                    <div class="mt-4"><label for="non-student-fb" class="block text-sm font-medium text-gray-300 mb-1">Facebook Profile URL</label><input type="url" id="non-student-fb" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    <div class="mt-4"><label for="non-student-address" class="block text-sm font-medium text-gray-300 mb-1">Address *</label><input type="text" id="non-student-address" class="form-input w-full rounded-md py-2 px-3 text-white"></div>
+                                    <div class="mt-4"><label class="block text-sm font-medium text-gray-300 mb-1">Delivery Option</label><div class="flex space-x-4"><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="pickup" class="form-radio"><span class="ml-2 text-gray-300">Self Pickup (Free)</span></label><label class="inline-flex items-center"><input type="radio" name="non-student-delivery" value="delivery" class="form-radio" checked><span class="ml-2 text-gray-300">Delivery</span></label></div></div>
+                                </div>
+                                <div class="mt-4"><label for="notes" class="block text-sm font-medium text-gray-300 mb-1">Special Requests/Notes</label><textarea id="notes" rows="2" class="form-input w-full rounded-md py-2 px-3 text-white"></textarea></div>
+                                <div class="mt-6 bg-black bg-opacity-20 p-4 rounded-lg">
+                                    <h4 class="text-lg font-semibold text-white mb-2">Order Summary</h4>
+                                    <div id="checkout-items" class="space-y-2 mb-4"></div>
+                                    <div class="border-t border-gray-600 pt-2 space-y-1">
+                                        <div class="flex justify-between"><span class="text-gray-300">Subtotal:</span><span id="checkout-subtotal"></span></div>
+                                        <div class="flex justify-between"><span class="text-gray-300">Delivery Fee:</span><span id="checkout-delivery" class="text-sm italic"></span></div>
+                                        <div class="flex justify-between font-bold mt-2"><span class="text-white">Total:</span><span id="checkout-total" class="gradient-text"></span></div>
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-2">Note: The final delivery fee depends on the drop-off location and will be confirmed via follow-up chat on our Facebook page.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-black bg-opacity-20 px-4 py-3 sm:px-6 border-t border-gray-700">
+                            <button id="place-order" class="w-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold py-3 px-4 rounded-md transition-all duration-300 transform hover:scale-105">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="confirmation-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-gray-900 opacity-90" onclick="closeModalById('confirmation-modal')"></div>
+                    <div class="relative glass-card rounded-lg text-center overflow-hidden shadow-xl transform transition-all sm:max-w-lg w-full p-6">
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-cyan-100"><i class="fas fa-check text-cyan-600 text-xl"></i></div>
+                        <div class="mt-3">
+                            <h3 class="text-3xl leading-6 font-bold gradient-text mb-4">DIOS MABALOS!</h3>
+                            <p class="text-gray-300 mb-4">Your order has been placed successfully!</p>
+                            <p class="text-gray-400 text-sm">Please follow our <a href="https://www.facebook.com/share/16TiJGA4Uy/?mibextid=wwXIfr" target="_blank" class="text-cyan-400 hover:underline">Facebook page</a> to verify and track your order. We will message you within the hour to confirm.</p>
+                            <div class="mt-6">
+                                <button id="close-confirmation" class="px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white rounded-md font-medium">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="image-viewer-modal" class="fixed inset-0 z-[999] hidden items-center justify-center bg-black bg-opacity-80 p-4 backdrop-blur-sm cursor-zoom-out">
+                    <button id="close-image-viewer" class="absolute top-4 right-6 text-white text-4xl hover:text-gray-300 transition-colors">&times;</button>
+                    <img id="zoomed-image" src="" alt="Zoomed Image" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl">
+                </div>
+            `;
+        }
+
+    </script>
+    <script>
+        // --- Interactive 3D Background with Three.js (Slower, Parallax on Scroll) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true, antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        camera.position.set(0, 0, 300);
+        let targetCameraY = camera.position.y;
+
+        const pointLight1 = new THREE.PointLight(0x8A2BE2, 2, 500);
+        pointLight1.position.set(150, 150, 150);
+        const pointLight2 = new THREE.PointLight(0x00BFFF, 2, 500);
+        pointLight2.position.set(-150, -150, 150);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(pointLight1, pointLight2, ambientLight);
+
+        const allShapes = [];
+        const standardMaterial = new THREE.MeshStandardMaterial({ color: 0xeeeeee, metalness: 0.9, roughness: 0.1 });
+        const textMaterial = new THREE.MeshStandardMaterial({ color: 0x00BFFF, emissive: 0x004466, metalness: 0.7, roughness: 0.2 });
+
+        const loader = new THREE.FontLoader();
+        loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            const equations = [
+                'E=mc²', 'F=ma', 'a²+b²=c²', 'e^{iπ}+1=0', 'H₂O', 'C₆H₁₂O₆',
+                'Φ', '∇·E=ρ/ε₀', 'ĤΨ=EΨ', 'ΣF=0', 'π', '∫', '√', '∞',
+                '∂', 'Δ', 'λ', 'Ω', 'PV=nRT', 'E=hf', 'F=dp/dt', 'S=k ln W'
+            ];
+
+            equations.forEach(eq => {
+                const textGeometry = new THREE.TextGeometry(eq, {
+                    font: font, size: 8, height: 1, curveSegments: 8,
+                    bevelEnabled: true, bevelThickness: 0.3, bevelSize: 0.1, bevelSegments: 2
+                });
+                textGeometry.center();
+                const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                const spreadX = 600, spreadY = 800, spreadZ = 300;
+                textMesh.position.set(
+                    (Math.random() - 0.5) * spreadX,
+                    (Math.random() - 0.5) * spreadY,
+                    (Math.random() - 0.5) * spreadZ
+                );
+                textMesh.rotation.set(
+                    Math.random() * Math.PI, Math.random() * Math.PI,
+                    Math.random() * Math.PI * 0.5 - Math.PI * 0.25
+                );
+                textMesh.userData = {
+                    rotationSpeed: { x: (Math.random() - 0.5) * 0.002, y: (Math.random() - 0.5) * 0.002, z: (Math.random() - 0.5) * 0.001 },
+                    pulseOffset: Math.random() * Math.PI * 2
+                };
+                allShapes.push(textMesh);
+                scene.add(textMesh);
+            });
+            
+            function createSimpleAstronaut() {
+                const group = new THREE.Group();
+                const mat = standardMaterial;
+                const body = new THREE.Mesh(new THREE.CylinderGeometry(2, 1.5, 6, 16), mat);
+                body.position.y = 3; group.add(body);
+                const head = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), mat);
+                head.position.y = 7; group.add(head);
+                const helmet = new THREE.Mesh(new THREE.SphereGeometry(2.1, 16, 16), new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.6, metalness: 0.3, roughness: 0.1 }));
+                helmet.position.y = 7; group.add(helmet);
+                const armGeom = new THREE.CylinderGeometry(0.5, 0.5, 5, 8);
+                const leftArm = new THREE.Mesh(armGeom, mat);
+                leftArm.position.set(-2.5, 3, 0); leftArm.rotation.z = Math.PI / 2.5; group.add(leftArm);
+                const rightArm = new THREE.Mesh(armGeom, mat);
+                rightArm.position.set(2.5, 3, 0); rightArm.rotation.z = -Math.PI / 2.5; group.add(rightArm);
+                const legGeom = new THREE.CylinderGeometry(0.6, 0.6, 5, 8);
+                const leftLeg = new THREE.Mesh(legGeom, mat);
+                leftLeg.position.set(-1, -2, 0); group.add(leftLeg);
+                const rightLeg = new THREE.Mesh(legGeom, mat);
+                rightLeg.position.set(1, -2, 0); group.add(rightLeg);
+                return group;
+            }
+            const astronaut = createSimpleAstronaut();
+            astronaut.position.set(0, 0, -100);
+            astronaut.scale.set(1.5, 1.5, 1.5);
+            astronaut.userData = { rotationSpeed: { x: 0.001, y: 0.002, z: 0.0005 }, pulseOffset: Math.random() * Math.PI * 2, parallaxFactor: 0.3 };
+            allShapes.push(astronaut);
+            scene.add(astronaut);
+        });
+
+        function addShapeToScene(shape) {
+            const spreadX = 800, spreadY = 1000, spreadZ = 400;
+            shape.position.set((Math.random() - 0.5) * spreadX, (Math.random() - 0.5) * spreadY, (Math.random() - 0.5) * spreadZ);
+            shape.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+            shape.userData = { rotationSpeed: { x: (Math.random() - 0.5) * 0.003, y: (Math.random() - 0.5) * 0.003, z: (Math.random() - 0.5) * 0.001 }, pulseOffset: Math.random() * Math.PI * 2, parallaxFactor: 1.0 };
+            shape.children.forEach(child => {
+                if (child instanceof THREE.Mesh && child.geometry.type === 'SphereGeometry') {
+                    const parentHasOrbits = shape.children.some(c => c instanceof THREE.Mesh && c.geometry.type === 'TorusGeometry');
+                    if (parentHasOrbits) {
+                        child.userData = { orbitRadius: child.position.length(), orbitSpeed: (Math.random() + 0.2) * 0.005, orbitAngle: Math.random() * Math.PI * 2, parallaxFactor: shape.userData.parallaxFactor };
+                    }
+                }
+            });
+            allShapes.push(shape);
+            scene.add(shape);
+        }
+
+        function createLogoGear() {
+            const group = new THREE.Group();
+            const centralSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), standardMaterial);
+            group.add(centralSphere);
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2;
+                const petal = new THREE.Mesh(new THREE.SphereGeometry(0.8, 16, 16), standardMaterial);
+                petal.position.set(Math.cos(angle) * 1.5, Math.sin(angle) * 1.5, 0);
+                group.add(petal);
+            }
+            group.scale.set(2.5, 2.5, 2.5);
+            return group;
+        }
+
+        function createDnaHelix() {
+            const group = new THREE.Group();
+            const radius = 2.5, height = 15, turns = 2, pairs = 15;
+            const sphereGeom = new THREE.SphereGeometry(0.4, 8, 8);
+            const purpleMat = new THREE.MeshStandardMaterial({ color: 0x8A2BE2, metalness: 0.8, roughness: 0.2 });
+            const cyanMat = new THREE.MeshStandardMaterial({ color: 0x00BFFF, metalness: 0.8, roughness: 0.2 });
+            for (let i = 0; i < pairs; i++) {
+                const y = (i / pairs) * height - height / 2;
+                const angle = (i / pairs) * Math.PI * 2 * turns;
+                const sphere1 = new THREE.Mesh(sphereGeom, purpleMat);
+                sphere1.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+                const sphere2 = new THREE.Mesh(sphereGeom, cyanMat);
+                sphere2.position.set(Math.cos(angle + Math.PI) * radius, y, Math.sin(angle + Math.PI) * radius);
+                group.add(sphere1, sphere2);
+            }
+            return group;
+        }
+
+        function createAtom() {
+            const group = new THREE.Group();
+            group.add(new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), standardMaterial));
+            for (let i = 0; i < 3; i++) {
+                const orbit = new THREE.Mesh(new THREE.TorusGeometry(6 + i * 2, 0.1, 8, 64), new THREE.MeshBasicMaterial({ color: 0x777777 }));
+                orbit.rotation.x = Math.PI / 2;
+                orbit.rotation.z = Math.random() * Math.PI;
+                group.add(orbit);
+                group.add(new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), standardMaterial));
+            }
+            return group;
+        }
+
+        function createSolarSystem() {
+            const group = new THREE.Group();
+            group.add(new THREE.Mesh(new THREE.SphereGeometry(6, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffcc33, emissive: 0x442200, metalness: 0.5, roughness: 0.3 })));
+            for (let i = 0; i < 5; i++) {
+                group.add(new THREE.Mesh(new THREE.SphereGeometry(0.8 + Math.random() * 0.8, 16, 16), standardMaterial));
+            }
+            return group;
+        }
+
+        const shapeGenerators = [createLogoGear, createDnaHelix, createAtom, createSolarSystem, () => new THREE.Mesh(new THREE.TetrahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.DodecahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.OctahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.IcosahedronGeometry(5, 0), standardMaterial), () => new THREE.Mesh(new THREE.TorusKnotGeometry(3, 1, 100, 16), standardMaterial)];
+        for (let i = 0; i < 150; i++) {
+            addShapeToScene(shapeGenerators[i % shapeGenerators.length]());
+        }
+
+        const starVertices = [];
+        for (let i = 0; i < 20000; i++) {
+            starVertices.push(THREE.MathUtils.randFloatSpread(3000), THREE.MathUtils.randFloatSpread(3000), THREE.MathUtils.randFloatSpread(1000));
+        }
+        const starGeometry = new THREE.BufferGeometry();
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xaaaaaa, size: 1.5, sizeAttenuation: true }));
+        scene.add(stars);
+
+        let mouseX = 0;
+        function updateMousePosition(event) {
+            const x = event.touches ? event.touches[0].clientX : event.clientX;
+            mouseX = ((x / window.innerWidth) * 2 - 1) * 0.5;
+        }
+        document.addEventListener('mousemove', updateMousePosition);
+        document.addEventListener('touchmove', updateMousePosition, { passive: true });
+
+        function updateScrollPosition() {
+            targetCameraY = (window.scrollY * 0.3);
+        }
+        window.addEventListener('scroll', updateScrollPosition);
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+            camera.position.y += (targetCameraY - camera.position.y) * 0.05;
+            camera.position.x += (mouseX * 20 - camera.position.x) * 0.03;
+
+            allShapes.forEach(shape => {
+                if (shape.userData.rotationSpeed) {
+                    shape.rotation.x += shape.userData.rotationSpeed.x;
+                    shape.rotation.y += shape.userData.rotationSpeed.y;
+                    shape.rotation.z += shape.userData.rotationSpeed.z || 0;
+                }
+                if (shape.userData.pulseOffset !== undefined) {
+                    const pulse = Math.sin(elapsedTime * 1.5 + shape.userData.pulseOffset) * 0.03 + 0.97;
+                    shape.scale.set(pulse, pulse, pulse);
+                }
+                shape.children.forEach(child => {
+                    if (child.userData && child.userData.orbitRadius) {
+                        child.userData.orbitAngle += child.userData.orbitSpeed;
+                        const r = child.userData.orbitRadius;
+                        child.position.x = Math.cos(child.userData.orbitAngle) * r;
+                        child.position.z = Math.sin(child.userData.orbitAngle) * r;
+                    }
+                });
+            });
+
+            pointLight1.position.y = Math.cos(elapsedTime * 0.25) * 150 + camera.position.y;
+            pointLight2.position.y = Math.sin(elapsedTime * 0.22) * -150 + camera.position.y;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        updateScrollPosition();
+    </script>
+</body>
+</html>
