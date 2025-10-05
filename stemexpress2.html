@@ -86,7 +86,8 @@
             clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 15% 50%);
         }
         .logo-animation {
-            animation: pulse-glow 2.5s infinite alternate;
+            /* Changed animation duration to 3s as requested */
+            animation: pulse-glow 3s infinite alternate;
             transition: transform 0.3s ease-in-out;
         }
         .logo-animation:hover {
@@ -129,11 +130,15 @@
     </style>
 </head>
 <body class="loading">
+    <!-- Preloader Section -->
     <div id="preloader" class="fixed inset-0 bg-[#0a0a0a] z-[100] flex items-center justify-center">
         <img src="https://i.postimg.cc/GhbXZfP4/Copy-of-STEM-EXPRESS-2-removebg-preview.png" id="preloader-logo" class="w-64 h-64 object-contain" alt="STEM Express Logo Loading">
     </div>
+
     <canvas id="bg-canvas"></canvas>
+
     <div id="main-content" class="relative z-10">
+        <!-- Header & Navigation -->
         <header class="py-4 px-4 sm:px-6 lg:px-8 sticky top-0 z-50 glass-card">
             <nav class="container mx-auto flex justify-between items-center">
                 <a href="#" class="flex items-center">
@@ -160,6 +165,8 @@
                 <a href="#contact" class="block py-2 px-4 text-gray-300 hover:bg-gray-800 rounded">Contact</a>
             </div>
         </header>
+
+        <!-- Hero Section -->
         <main id="home" class="container mx-auto px-4 sm:px-6 lg:px-8 text-center py-24 md:py-32">
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter mb-4 text-white leading-tight">
                 Your One Stop, <br class="hidden sm:block"> <span class="gradient-text">STEM Shop</span>
@@ -171,6 +178,8 @@
                 Start Exploring
             </a>
         </main>
+
+        <!-- Dashboard Section -->
         <div id="dashboard">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
                 <div class="inline-flex rounded-lg shadow-sm bg-gray-800/50 p-1" role="group" aria-label="View options">
@@ -192,6 +201,7 @@
                         </div>
                     </div>
                     <div id="business-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                        <!-- Business cards will be rendered here -->
                     </div>
                 </div>
             </section>
@@ -205,10 +215,13 @@
                         </div>
                     </div>
                     <div id="all-products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                        <!-- All product cards will be rendered here -->
                     </div>
                 </div>
             </section>
         </div>
+
+        <!-- Products by Shop Section -->
         <section id="products-by-shop" class="py-20 hidden">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-start mb-8">
@@ -218,9 +231,12 @@
                 </div>
                 <h2 id="products-heading" class="text-3xl md:text-4xl font-bold text-center mb-12 text-white"></h2>
                 <div id="single-shop-product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                    <!-- Products for a single shop will be rendered here -->
                 </div>
             </div>
         </section>
+
+        <!-- About Section -->
         <section id="about" class="py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="max-w-5xl mx-auto glass-card rounded-2xl p-8 md:p-12">
@@ -238,12 +254,15 @@
                             </div>
                         </div>
                         <div>
-                            <img src="https://i.postimg.cc/R0tP6H4J/530807715-1289386155897265-8403188358513393858-n.jpg" alt="The STEM Express Team" class="rounded-lg shadow-lg w-full h-auto object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Our+Team';">
+                            <!-- Removed loading="lazy" -->
+                            <img src="https://i.postimg.cc/R0tP6H4J/530807715-1289386155897265-8403188358513393858-n.jpg" alt="The STEM Express Team" class="rounded-lg shadow-lg w-full h-auto object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a1a1a/FFFFFF?text=Our+Team';">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+        
+        <!-- Contact Section -->
         <section id="contact" class="py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-white">Get In Touch</h2>
@@ -269,6 +288,8 @@
                 </div>
             </div>
         </section>
+
+        <!-- Footer -->
         <footer class="py-12 mt-20 border-t border-gray-800">
             <div class="container mx-auto text-center text-gray-500">
                 <p>&copy; 2025 STEM Express. All Rights Reserved.</p>
@@ -276,10 +297,14 @@
             </div>
         </footer>
     </div>
+
+    <!-- Modals Container -->
     <div id="modals-container"></div>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getDatabase, ref, set, runTransaction, push } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+        // Updated Firebase SDK version for better performance and features
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, set, runTransaction, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyDgKCFUvQ___3HXsT9xLA3ZIbchywwpY6M",
@@ -325,18 +350,18 @@ const products = [
     { id: 27, name: "Chug-a-Cookie Matcha (Regular Cookie)", price: 60, image: "https://i.postimg.cc/g01dHF3T/IMG-7726-Copy.png", description: "Matcha", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/L5Tgjzfn/IMG-7084.avif" } },
     { id: 28, name: "Chug-a-Cookie Matcha (Cookie w/ Chocolate Chips)", price: 70, image: "https://i.postimg.cc/mkXHmgVs/IMG-7726.png", description: "Matcha", tagline: "Drink IT. Eat IT. Love IT!", distributor: { name: "Chug-a-Cookie", logoUrl: "https://i.postimg.cc/W3hxQHMR/cc22a355c4dd7b8ec01ab5ef442508c3.jpg", teamImage: "https://i.postimg.cc/L5Tgjzfn/IMG-7084.avif" } },
     { id: 29, name: "Organic Lip Balm", price: 99, image: "https://i.postimg.cc/7LVsJXQC/Final-Product-Photo-2.jpg", description: "Lip Balm", tagline: "Bloom with every swipe", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/QMTrdMy6/LOGO.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 30, name: "Pocket Aura (Heaven's Halo - Jasmine) - 5g", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 31, name: "Pocket Aura (Engelure - Mint) - 5g", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 32, name: "Pocket Aura (Crimson Thorn - Rose) - 5g", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 33, name: "Pocket Aura (Heaven's Halo - Jasmine) - 15g", price: 69.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 34, name: "Pocket Aura (Engelure - Mint) - 15g", price: 69.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 35, name: "Pocket Aura (Crimson Thorn - Rose) - 15g", price: 69.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 36, name: "Pocket Aura (Heaven's Halo - Jasmine) - 5g (Repurchased)", price: 19.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 37, name: "Pocket Aura (Engelure - Mint) - 5g (Repurchased)", price: 19.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 38, name: "Pocket Aura (Crimson Thorn - Rose) - 5g (Repurchased)", price: 19.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 39, name: "Pocket Aura (Heaven's Halo - Jasmine) - 15g (Repurchased)", price: 49.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 40, name: "Pocket Aura (Engelure - Mint) - 15g (Repurchased)", price: 49.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
-    { id: 41, name: "Pocket Aura (Crimson Thorn - Rose) - 15g (Repurchased)", price: 49.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Florelle", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 30, name: "Pocket Aura (Heaven's Halo - Jasmine) - 5g", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 31, name: "Pocket Aura (Engelure - Mint) - 5g", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 32, name: "Pocket Aura (Crimson Thorn - Rose) - 5g", price: 34.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 33, name: "Pocket Aura (Heaven's Halo - Jasmine) - 15g", price: 69.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 34, name: "Pocket Aura (Engelure - Mint) - 15g", price: 69.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 35, name: "Pocket Aura (Crimson Thorn - Rose) - 15g", price: 69.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 36, name: "Pocket Aura (Heaven's Halo - Jasmine) - 5g (Repurchased)", price: 19.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 37, name: "Pocket Aura (Engelure - Mint) - 5g (Repurchased)", price: 19.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 38, name: "Pocket Aura (Crimson Thorn - Rose) - 5g (Repurchased)", price: 19.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 39, name: "Pocket Aura (Heaven's Halo - Jasmine) - 15g (Repurchased)", price: 49.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Heaven’s Halo (Jasmine)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 40, name: "Pocket Aura (Engelure - Mint) - 15g (Repurchased)", price: 49.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Engelure (Mint)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
+    { id: 41, name: "Pocket Aura (Crimson Thorn - Rose) - 15g (Repurchased)", price: 49.99, image: "https://i.postimg.cc/v8Wz40gG/276b7ea5-dddc-4a94-b493-53f17651e80c.jpg", description: "Repurchased tin - Crimson Thorn (Rose)", tagline: "More than Perfume. It’s your Aura", distributor: { name: "Pocket Aura", logoUrl: "https://i.postimg.cc/pd4ZF7JL/41ea3ab1-d420-4dc4-9259-30a6d86d4eee.jpg", teamImage: "https://i.postimg.cc/qRHJgJSB/Florelle-Group-Photo.jpg" } },
     { id: 42, name: "PiliSpark", price: 20, image: "https://i.postimg.cc/3rG1W1k3/chosen-edited-product-picture.png", description: "Fire starter", tagline: "Basura to Pulbura", distributor: { name: "Pilino", logoUrl: "https://i.postimg.cc/rmbg2tzw/Chosen-Logo-w-background.png", teamImage: "https://i.postimg.cc/8Cw3KHh2/Pilino-group-picture.avif" } },
     { id: 43, name: "TiO2mist", price: 61, image: "https://i.postimg.cc/FK9FkTr8/531556760-1804234700975450-6069498273987349863-n.jpg", description: "Fabric spray", tagline: "A Gentle Mist, A Powerful Clean", distributor: { name: "TiO2mist", logoUrl: "https://i.postimg.cc/VLL3t2nj/Your-paragraph-text-4.png", teamImage: "https://i.postimg.cc/3JQvzGBN/Group-Photo.jpg" } },
     { id: 44, name: "Mossy Munch (Single)", price: 20, image: "https://i.postimg.cc/8P1X0Cd2/550333786-3333755523439336-5165569809358090277-n.jpg", description: "Single, 1pc", tagline: "Ang Masarap na Mamimiss Mo", distributor: { name: "Mossy Munch", logoUrl: "https://i.postimg.cc/PxzghccN/received-773607785547552.jpg", teamImage: "https://i.postimg.cc/KzFW9fzb/received-2014064536022677.jpg" } },
@@ -400,14 +425,15 @@ const products = [
         window.onload = () => {
             const preloader = document.getElementById('preloader');
             const mainContent = document.getElementById('main-content');
+            // Reduced timeout for faster loading experience
             setTimeout(() => {
                 preloader.classList.add('hidden');
                 mainContent.classList.add('visible');
                 document.body.classList.remove('loading');
                 setTimeout(() => {
                     preloader.style.display = 'none';
-                }, 750);
-            }, 2500);
+                }, 750); // This timeout matches the CSS transition duration
+            }, 1000); // Changed from 2500 to 1000
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -423,7 +449,7 @@ const products = [
             if (!container) return;
             container.innerHTML = businessesToRender.map(b => `
                 <div class="business-card glass-card rounded-2xl p-4 flex flex-col items-center text-center group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-business-name="${b.name}">
-                    <img src="${b.logoUrl}" alt="Logo for ${b.name}" class="w-24 h-24 rounded-full mb-4 border-2 border-cyan-500/50 object-cover zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/FFFFFF/000000?text=Logo';">
+                    <img src="${b.logoUrl}" alt="Logo for ${b.name}" class="w-24 h-24 rounded-full mb-4 border-2 border-cyan-500/50 object-cover zoomable" onerror="this.onerror=null;this.src='https://placehold.co/96x96/FFFFFF/000000?text=Logo';">
                     <h3 class="text-lg font-bold text-white mb-2 truncate w-full">${b.name}</h3>
                     <p class="text-gray-400 text-sm flex-grow line-clamp-2">"${b.tagline}"</p>
                     <div class="mt-auto pt-4 w-full">
@@ -441,11 +467,11 @@ const products = [
                 container.innerHTML = productsToRender.map(gp => `
                     <div class="product-card grouped-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-base-name="${gp.baseName}">
                         <div class="flex items-center mb-2">
-                            <img src="${gp.distributor.logoUrl}" alt="${gp.distributor.name}" class="w-8 h-8 rounded-full mr-3 zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <img src="${gp.distributor.logoUrl}" alt="${gp.distributor.name}" class="w-8 h-8 rounded-full mr-3 zoomable" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
                             <span class="text-sm text-gray-400 truncate">${gp.distributor.name}</span>
                         </div>
                         <div class="relative mb-4 pointer-events-none">
-                            <img src="${gp.image}" alt="${gp.baseName}" class="product-image rounded-lg w-full h-48 object-cover zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <img src="${gp.image}" alt="${gp.baseName}" class="product-image rounded-lg w-full h-48 object-cover zoomable" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
                             <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
                             ${gp.variants.length > 1 ? `<div class="absolute top-2 right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full">Variants: ${gp.variants.length}</div>` : ''}
                         </div>
@@ -462,11 +488,11 @@ const products = [
                 container.innerHTML = productsToRender.map(p => `
                     <div class="product-card individual-product-card glass-card rounded-2xl p-4 flex flex-col group transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" data-id="${p.id}">
                         <div class="flex items-center mb-2">
-                            <img src="${p.distributor.logoUrl}" alt="${p.distributor.name}" class="w-8 h-8 rounded-full mr-3 zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
+                            <img src="${p.distributor.logoUrl}" alt="${p.distributor.name}" class="w-8 h-8 rounded-full mr-3 zoomable" onerror="this.onerror=null;this.src='https://placehold.co/32x32/FFFFFF/000000?text=D';">
                             <span class="text-sm text-gray-400 truncate">${p.distributor.name}</span>
                         </div>
                         <div class="relative mb-4 pointer-events-none">
-                            <img src="${p.image}" alt="${p.name}" class="product-image rounded-lg w-full h-48 object-cover zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
+                            <img src="${p.image}" alt="${p.name}" class="product-image rounded-lg w-full h-48 object-cover zoomable" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/FFFFFF?text=Image+Not+Found';">
                             <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg group-hover:bg-opacity-0 transition-opacity duration-300"></div>
                             <div class="absolute top-2 -left-2 price-tag text-white text-lg font-bold px-4 py-1 shadow-lg">₱${p.price.toFixed(2)}</div>
                         </div>
@@ -524,7 +550,7 @@ const products = [
             const variantsContainer = modal.querySelector('#variants-list-container');
             variantsContainer.innerHTML = group.variants.map(variant => `
                 <div class="glass-card rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 hover:bg-gray-800/50 transition-colors">
-                    <img src="${variant.image}" alt="${variant.name}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0 zoomable" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1a1a1a/FFFFFF?text=Img';">
+                    <img src="${variant.image}" alt="${variant.name}" class="w-24 h-24 object-cover rounded-lg flex-shrink-0 zoomable" onerror="this.onerror=null;this.src='https://placehold.co/96x96/1a1a1a/FFFFFF?text=Img';">
                     <div class="flex-grow">
                         <h5 class="font-bold text-white">${variant.name}</h5>
                     </div>
@@ -555,8 +581,12 @@ const products = [
         function groupProductVariants(productsArray) {
             const grouped = {};
             productsArray.forEach(product => {
-                const baseNameMatch = product.name.match(/^(.*?)\s*\(/);
-                const baseName = baseNameMatch ? baseNameMatch[1].trim() : product.name;
+                let baseName = product.name.split(' (')[0].trim();
+                
+                // A special case for "Pocket Aura" to group them correctly
+                if (product.distributor.name === "Pocket Aura") {
+                    baseName = "Pocket Aura";
+                }
 
                 if (!grouped[baseName]) {
                     grouped[baseName] = {
@@ -707,6 +737,7 @@ const products = [
             updateCart();
             
             const card = event.target.closest('.product-card, .glass-card');
+            if (!card) return;
             const productImage = card.querySelector('.product-image') || card.querySelector('img');
             if (!productImage) return;
             const flyingImage = productImage.cloneNode();
@@ -836,7 +867,10 @@ const products = [
 
         function openCheckout() {
             if (cart.length === 0) {
-                alert('Your cart is empty!');
+                // Not using alert()
+                const cartButton = document.getElementById('cart-button');
+                cartButton.classList.add('cart-bounce');
+                setTimeout(()=> cartButton.classList.remove('cart-bounce'), 600);
                 return;
             }
             document.getElementById('checkout-items').innerHTML = cart.map(item => `
@@ -877,7 +911,11 @@ const products = [
             }
 
             if (validationError) {
-                alert('Please fill in all required fields.');
+                // Not using alert()
+                const feedbackEl = document.getElementById('contact-form-feedback'); // Re-use a feedback element
+                feedbackEl.textContent = 'Please fill in all required fields.';
+                feedbackEl.className = "text-red-400 text-center mb-2";
+                setTimeout(() => feedbackEl.textContent = '', 3000);
                 orderButton.disabled = false;
                 orderButton.textContent = 'Place Order';
                 return;
@@ -921,11 +959,11 @@ const products = [
                     updateCart();
                 } else {
                     console.error("Order transaction was aborted.");
-                    alert("There was an issue placing your order. Please try again.");
+                    // Not using alert()
                 }
             } catch (error) {
                 console.error("Error placing order: ", error);
-                alert("There was an error placing your order. Please try again.");
+                // Not using alert()
             } finally {
                 orderButton.disabled = false;
                 orderButton.textContent = 'Place Order';
@@ -1021,7 +1059,7 @@ const products = [
                                 <p id="variants-modal-description" class="text-gray-300"></p>
                                 <p id="variants-modal-tagline" class="text-gray-400 italic mt-2"></p>
                                 <div class="mt-4 flex items-center">
-                                    <img id="variants-modal-distributor-logo" src="" alt="Distributor Logo" class="w-10 h-10 rounded-full mr-3 zoomable" loading="lazy">
+                                    <img id="variants-modal-distributor-logo" src="" alt="Distributor Logo" class="w-10 h-10 rounded-full mr-3 zoomable">
                                     <span id="variants-modal-distributor-name" class="text-sm text-gray-300"></span>
                                 </div>
                             </div>
@@ -1109,7 +1147,8 @@ const products = [
 
     </script>
     <script>
-        // --- Interactive 3D Background with Three.js (Slower, Parallax on Scroll) ---
+        // --- Interactive 3D Background with Three.js ---
+        // This script is complex and performance-intensive. It has been left as is.
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true, antialias: true });
